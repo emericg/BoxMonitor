@@ -1,0 +1,226 @@
+/* ******************************************************************** */
+
+body {
+  background-color: #F5F5F5;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+
+/* ********************************************************************* */
+/* Header ****************************************************************/
+
+header {
+  /*position: fixed;*/
+  background-color: #A2A2A2;
+  width: 100%;
+  height: 48px;
+}
+
+#header_zone {
+  width: 80%;
+  height: 100%;
+  min-width: 400px;
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+/* Header: title */
+
+#title {
+  display: inline-block;
+  float: left;
+  height: 100%;
+  color: #252525;
+}
+
+#title h1 {
+  display: inline-block;
+  text-decoration: bold;
+  margin-top: 4px;
+  font-size: 2em;
+}
+
+#title h2 {
+  display: inline-block;
+  vertical-align: super;
+  text-decoration: bold;
+  text-transform: uppercase;
+  font-size: 1.3em;
+}
+
+/* Header: navigation */
+
+nav {
+  color: white;
+  display: inline-block;
+  height: 100%;
+  float: right;
+  font-size: 1.4em;
+  margin-top: 8px;
+}
+
+nav ul {
+  color: white;
+  list-style-type: none;
+}
+
+nav li {
+  color: white;
+  vertical-align: middle;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+nav a {
+  color: white;
+  padding-bottom: 3px;
+  text-decoration: none;
+}
+
+nav a:hover {
+    color: #252525;
+    border-bottom: 2px solid white;
+}
+
+/* ******************************************************************** */
+/* Page body ********************************************************** */
+
+#page {
+  background-color: #eeeeee;
+  width: 80%;
+  min-width: 400px;
+  min-height: 1024px;
+  margin-left: 5%;
+  margin-right: 5%;
+  padding-top: 3%;
+  padding-left: 5%;
+  padding-right: 5%;
+  padding-bottom: 3%;
+}
+
+section {
+  margin-bottom: 3%;
+}
+
+/* ******************************************************************** */
+
+.box_square {
+  float: left;
+  background-color: white;
+  display: inline-block;
+  width: 47%;
+  height: 256px;
+  margin-right: 2%;
+  overflow: hidden;
+}
+
+.box_wide {
+  background-color: white;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* ******************************************************************** */
+
+.box_header {
+  background-color: #252525;
+  height: 64px;
+}
+
+.box_header .logo {
+  width: 32px;
+  height: 32px;
+  margin: 16px;
+  float: left;
+}
+
+.box_header .title {
+  vertical-align: middle;
+  height: 48px;
+  margin-top: 8px;
+  float: left;
+  color: white;
+}
+
+.box_header .title h1 {
+  font-size: 1.4em;
+  font-weight: bold;
+}
+
+.box_header .title h2 {
+  font-size: 1em;
+}
+
+.box_header .infos {
+  vertical-align: middle;
+  float: right;
+  height: 32px;
+  padding: 13px;
+  font-size: 2em;
+  font-weight: bold;
+  color: white;
+}
+
+/* ******************************************************************** */
+
+.box_body {
+  background-color: white;
+  padding: 2%;
+}
+
+.box_zone {
+  background-color: grey;
+  border-top: 2px solid gray;
+  padding: 3%;
+  width: 75px;
+  height: 75px;
+}
+
+/* ******************************************************************** */
+/* Footer ************************************************************* */
+
+footer {
+  width: 100%;
+  min-width: 500px;
+  padding-left: 10%;
+  padding-right: 10%;
+  border-top: 1px solid gray;
+  background-color: #FFFFFF;
+}
+
+/* ******************************************************************** */
+/* ******************************************************************** */
+
+.chart rect {
+  stroke: white;
+  fill: #EB7C6E;
+}
+
+/* ******************************************************************** */
+
+.orange {
+  color: #FFD435;
+}
+
+.pink {
+  color: #9E82DE
+}
+
+.red {
+  color: #EB7C6E;
+}
+
+.green {
+  color: #97DC5F;
+}
+
+.blue {
+  color: #79D1EE;
+}
+
+.dark {
+  color: #252525;
+}
+
+/* ******************************************************************** */

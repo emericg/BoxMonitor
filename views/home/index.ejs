@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta charset="utf-8" />
+    <meta content="Emeric" name="author">
+    <meta content="Realtime system monitoring" name="description">
+    <title><%- title %></title>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <%- assets.css() %>
+    <%- assets.js() %>
+  </head>
+
+  <body>
+    <%- partial('partials/header')%>
+
+    <div id="page">
+
+      <section>
+        <div class="box_wide">
+          <div class="box_header">
+            <img class="logo" src="images/round/gear.png" >
+            <div class="title">
+              <h1 class="orange">System informations</h1>
+              <h2 class="orange">A lot of system informations in this box</h2>
+            </div>
+          </div>
+          <div class="box_body">
+            <table>
+              <tr>
+                <td><b>Network hostname:</b></td>
+                <td><%- sys_hostname %></td>
+              </tr>
+              <tr>
+                <td><b>Operating system:</b></td>
+                <td><%- sys_os_t %></td>
+              </tr>
+              <tr>
+                <td><b>Temporary directory:</b></td>
+                <td><%- sys_tmpdir %></td>
+              </tr>
+            </table>
+            <br />
+            <b>Processors:</b> <%- sys_cpu_t %> <%- sys_cpu %><br />
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="box_wide">
+          <div class="box_header">
+            <img class="logo" src="images/round/alert.png" >
+            <div class="title">
+              <h1 class="green">CPU graph</h1>
+              <h2 class="green">Let's try sokcet.io!</h2>
+            </div>
+          </div>
+          <div class="box_body">
+            <b>Load average:</b><br/>
+            <span id="cpu_avg">Gathering cpu load through socket.io...</span><br/>
+            <b>Instant usage:</b><br/>
+            <span id="cpu_instant">Gathering cpu usage through socket.io...</span><br/>
+            <b>Instant average:</b><br/>
+            <span id="cpu_instant_avg">Gathering cpu usage through socket.io...</span><br/>
+            <!-- <svg class="graph_cpu"></svg> -->
+            <script src="box_cpu.js"></script>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="box_square">
+          <div class="box_header">
+            <img class="logo" src="images/round/gear.png" >
+            <div class="title">
+              <h1 class="pink">CPUs</h1>
+              <h2 class="pink">Detailed processors list</h2>
+            </div>
+          </div>
+          <div class="box_body">
+            <% _.each(sys_cpus, function (sys_cpus) { %>
+            <li><%= sys_cpus.model %></li>
+            <% }) %>
+          </div>
+        </div>
+
+        <div class="box_square">
+          <div class="box_header">
+            <img class="logo" src="images/round/usage.png" >
+            <div class="title">
+              <h1 class="red">Memory</h1>
+              <h2 class="red">Detailed memory stats</h2>
+            </div>
+            <div class="infos"><p class="red">0%</p></div>
+          </div>
+          <div class="box_body">
+            <table>
+              <tr>
+                <td><b>Total:</b></td>
+                <td><%- sys_mem_mib %> (<%- sys_mem_mb %>)</td>
+              </tr>
+              <tr>
+                <td><b>Used:</b></td>
+                <td><%- sys_mem_used %></td>
+              </tr>
+              <tr>
+                <td><b>Free:</b></td>
+                <td><%- sys_mem_free %></td>
+              </tr>
+            </table>
+            <br/>
+            <svg class="graph_mem"></svg>
+            <script src="box_mem.js"></script>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="box_square">
+          <div class="box_header">
+            <img class="logo" src="images/round/bdd.png" >
+            <div class="title">
+              <h1 class="blue">Network</h1>
+              <h2 class="blue">Active network interfaces for '<%- sys_hostname %>'</h2>
+            </div>
+          </div>
+          <div class="box_body">
+            <b>Interfaces:</b><br />
+            <% _.each(sys_net, function (sys_net) { %>
+            <li><%= JSON.stringify(sys_net) %></li>
+            <% }) %><br />
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <%- partial('partials/footer')%>
+  </body>
+
+</html>

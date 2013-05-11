@@ -4,12 +4,12 @@
   <head>
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
     <meta charset="utf-8" />
-    <meta content="Emeric" name="author">
-    <meta content="Realtime system monitoring" name="description">
+    <meta content="Emeric" name="author" />
+    <meta content="Realtime system monitoring" name="description" />
+    <link rel="icon" type="image/svg" href="/public/favicon.svg" />
     <title><%- title %></title>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <%- assets.css() %>
-    <%- assets.js() %>
   </head>
 
   <body>
@@ -53,18 +53,112 @@
             <img class="logo" src="images/round/alert.png" >
             <div class="title">
               <h1 class="green">CPU graph</h1>
-              <h2 class="green">Let's try sokcet.io!</h2>
+              <h2 class="green">Let's try socket.io!</h2>
             </div>
           </div>
           <div class="box_body">
             <b>Load average:</b><br/>
-            <span id="cpu_avg">Gathering cpu load through socket.io...</span><br/>
+            <span id="cpu_load_avg">Gathering cpu load through socket.io...</span><br/>
+            <b>Frequencies:</b><br/>
+            <span id="cpu_freq">Gathering cpu frequencies through socket.io...</span><br/>
+            <b>Frequencies average:</b><br/>
+            <span id="cpu_freq_avg">Gathering average cpu frequency through socket.io...</span><br/>
             <b>Instant usage:</b><br/>
-            <span id="cpu_instant">Gathering cpu usage through socket.io...</span><br/>
+            <span id="cpu_usage">Gathering cpu usage through socket.io...</span><br/>
             <b>Instant average:</b><br/>
-            <span id="cpu_instant_avg">Gathering cpu usage through socket.io...</span><br/>
-            <!-- <svg class="graph_cpu"></svg> -->
+            <span id="cpu_usage_avg">Gathering average cpu usage through socket.io...</span><br/>
             <script src="box_cpu.js"></script>
+
+<svg class="graph_cpu" height="128px"></svg>
+
+<script>
+var socket = io.connect('http://localhost:1337');
+
+var t = 0, // start time (seconds since epoch)
+    v = 0, // start value (subscribers)
+    data = d3.range(33).map(usage_start); // starting dataset
+
+function usage_start() {
+  return {
+    timecode: t++,
+    usage: 0
+  };
+}
+
+function usage_graph() {
+  socket.request('/cpu/usage_avg', {
+    message: 'usage_avg'
+  }, function (response) {
+    console.log(JSON.stringify(response));
+    t = 33 + response[0].timecode;
+    v = response[0].usage;
+  });
+
+  return {
+    timecode: t,
+    usage: v
+  };
+}
+
+setInterval(function() {
+  data.shift();
+  data.push(usage_graph());
+  redraw();
+}, 1000);
+
+var w = 20, h = 128;
+
+var x = d3.scale.linear()
+    .domain([0, 1])
+    .range([0, w]);
+
+var y = d3.scale.linear()
+    .domain([0, 100])
+    .rangeRound([0, h]);
+
+var chart = d3.select(".graph_cpu").append("svg")
+    .attr("class", "chart")
+    .attr("width", w * data.length - 1)
+    .attr("height", h);
+
+chart.selectAll("rect")
+    .data(data)
+  .enter().append("rect")
+    .attr("x", function(d, i) { return x(i) - .5; })
+    .attr("y", function(d) { return h - y(d.usage) - .5; })
+    .attr("width", w)
+    .attr("height", function(d) { return y(d.usage); });
+
+chart.append("line")
+    .attr("x1", 0)
+    .attr("x2", w * data.length)
+    .attr("y1", h - .5)
+    .attr("y2", h - .5)
+    .style("stroke", "#000");
+
+function redraw() {
+  var rect = chart.selectAll("rect")
+      .data(data, function(d) { return d.timecode; });
+
+  rect.enter().insert("rect", "line")
+      .attr("x", function(d, i) { return x(i + 1) - .5; })
+      .attr("y", function(d) { return h - y(d.usage) - .5; })
+      .attr("width", w)
+      .attr("height", function(d) { return y(d.usage); })
+    .transition()
+      .duration(1000)
+      .attr("x", function(d, i) { return x(i) - .5; });
+
+  rect.transition()
+      .duration(1000)
+      .attr("x", function(d, i) { return x(i) - .5; });
+
+  rect.exit().transition()
+      .duration(1000)
+      .attr("x", function(d, i) { return x(i - 1) - .5; })
+      .remove();
+}
+</script>
           </div>
         </div>
       </section>
@@ -92,7 +186,7 @@
               <h1 class="red">Memory</h1>
               <h2 class="red">Detailed memory stats</h2>
             </div>
-            <div class="infos"><p class="red">0%</p></div>
+            <div class="infos"><p class="red"><span id="mem_usage_percent">0</span>%</p></div>
           </div>
           <div class="box_body">
             <table>
@@ -133,7 +227,6 @@
           </div>
         </div>
       </section>
-
     </div>
 
     <%- partial('partials/footer')%>

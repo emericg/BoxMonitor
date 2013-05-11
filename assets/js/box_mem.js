@@ -1,11 +1,12 @@
-var chart;
+
+var chart_mem = null;
 var data = [];
 
-function chart_data(param) {
+function chart_mem_data(param) {
   data[0] = param;
 
-  chart = d3.select(".graph_mem").append("svg")
-    .attr("class", "chart")
+  chart_mem = d3.select(".graph_mem").append("svg")
+    .attr("class", "chart_mem")
     .attr("width", "100%")
     .attr("height", 72)
     .append("g")
@@ -18,7 +19,7 @@ function chart_data(param) {
     .domain(data)
     .rangeBands([16, 48]);
 
-  chart.selectAll("line")
+  chart_mem.selectAll("line")
     .data(x.ticks(4))
     .enter().append("line")
     .attr("x1", x)
@@ -26,7 +27,7 @@ function chart_data(param) {
     .attr("y1", 0)
     .attr("y2", 72)
     .style("stroke", "#ccc");
-  chart.selectAll(".rule")
+  chart_mem.selectAll(".rule")
     .data(x.ticks(4))
     .enter().append("text")
     .attr("class", "rule")
@@ -36,13 +37,13 @@ function chart_data(param) {
     .attr("text-anchor", "middle")
     .text(String);
 
-  chart.selectAll("rect")
+  chart_mem.selectAll("rect")
     .data(data)
     .enter().append("rect")
     .attr("y", y)
     .attr("width", x)
     .attr("height", y.rangeBand());
-  chart.selectAll("text")
+  chart_mem.selectAll("text")
     .data(data)
     .enter().append("text")
     .attr("x", x)
@@ -52,13 +53,13 @@ function chart_data(param) {
     .attr("text-anchor", "end") // text-align: right
     .text(String);
 
-  chart.append("line")
+  chart_mem.append("line")
     .attr("y1", 0)
     .attr("y2", 72)
     .style("stroke", "#000");
 }
 
-function rechart_data(param) {
+function rechart_mem_data(param) {
   data[0] = param;
 
   var x = d3.scale.linear()
@@ -68,7 +69,7 @@ function rechart_data(param) {
     .domain(data)
     .rangeBands([16, 48]);
 
-  chart.selectAll("rect")
+  chart_mem.selectAll("rect")
     .data(data)
     .transition()
     .attr("y", y)
@@ -77,20 +78,25 @@ function rechart_data(param) {
 }
 
 function load_data() {
-  socket.request('/mem/usage', {
-    message: 'mem'
+  socket.request('/mem/usage_percent', {
+    message: 'usage_percent'
   }, function (response) {
     //console.log(response);
-    chart_data(response);
+    chart_mem_data(response);
+    document.getElementById('mem_usage_percent').innerHTML = JSON.stringify(response);
   });
 }
 
 function reload_data() {
-  socket.request('/mem/usage', {
-    message: 'mem'
+  if( chart_mem == null)
+    load_data();
+
+  socket.request('/mem/usage_percent', {
+    message: 'usage_percent'
   }, function (response) {
     //console.log(response);
-    rechart_data(response);
+    rechart_mem_data(response);
+    document.getElementById('mem_usage_percent').innerHTML = JSON.stringify(response);
   });
 }
 

@@ -3,7 +3,6 @@
     -> controller
 ---------------------*/
 
-var tc = 0;
 var os = require('os');
 
 var MemController = {
@@ -11,6 +10,14 @@ var MemController = {
   // To trigger this action locally, visit: `http://localhost:port/mem/index`
   index: function (req,res)
   {
+    //
+  },
+
+  // To trigger this action locally, visit: `http://localhost:port/mem/mem_stats`
+  stats: function (req,res)
+  {
+    var tc = new Date();
+
     // Get the value of a parameter
     //var param = req.param('message');
 
@@ -26,8 +33,8 @@ var MemController = {
     res.json(jsonObj);
   },
 
-  // To trigger this action locally, visit: `http://localhost:port/mem/usage`
-  usage: function (req,res)
+  // To trigger this action locally, visit: `http://localhost:port/mem/usage_percent`
+  usage_percent: function (req,res)
   {
     // Get the value of a parameter
     //var param = req.param('message');

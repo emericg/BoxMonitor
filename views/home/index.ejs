@@ -57,26 +57,32 @@
             </div>
           </div>
           <div class="box_body">
-            <b>Load average:</b><br/>
-            <span id="cpu_load_avg">Gathering cpu load through socket.io...</span><br/>
-            <b>Frequencies:</b><br/>
-            <span id="cpu_freq">Gathering cpu frequencies through socket.io...</span><br/>
-            <b>Frequencies average:</b><br/>
-            <span id="cpu_freq_avg">Gathering average cpu frequency through socket.io...</span><br/>
-            <b>Instant usage:</b><br/>
-            <span id="cpu_usage">Gathering cpu usage through socket.io...</span><br/>
-            <b>Instant average:</b><br/>
-            <span id="cpu_usage_avg">Gathering average cpu usage through socket.io...</span><br/>
-            <script src="box_cpu.js"></script>
+            <table>
+              <tr>
+                <td><b>CPU load average:</b></td>
+                <td><span id="cpu_load_avg">Gathering cpu load through socket.io...</span></td>
+              </tr>
+              <tr>
+                <td><b>CPU usage average:</b></td>
+                <td><span id="cpu_usage_avg">Gathering average cpu usage through socket.io...</span></td>
+              </tr>
+              <tr>
+                <td><b>CPU frequencies average:</b></td>
+                <td><span id="cpu_freq_avg">Gathering average cpu frequency through socket.io...</span></td>
+              </tr>
+            </table>
+            <b>Frequencies:</b> <span id="cpu_freq">Gathering cpu frequencies through socket.io...</span><br/>
+            <b>Instant usage:</b> <span id="cpu_usage">Gathering cpu usage through socket.io...</span><br/>
 
-<svg class="graph_cpu" height="128px"></svg>
+            <script type="text/javascript" src="box_cpu.js"></script>
+            <div class="box_zone"><div class="graph_cpu" height="128px"></div></div>
 
-<script>
+<script type="text/javascript">
 var socket = io.connect('http://localhost:1337');
 
 var t = 0, // start time (seconds since epoch)
     v = 0, // start value (subscribers)
-    data = d3.range(33).map(usage_start); // starting dataset
+    data = d3.range(50).map(usage_start); // starting dataset
 
 function usage_start() {
   return {
@@ -89,8 +95,8 @@ function usage_graph() {
   socket.request('/cpu/usage_avg', {
     message: 'usage_avg'
   }, function (response) {
-    console.log(JSON.stringify(response));
-    t = 33 + response[0].timecode;
+    //console.log(JSON.stringify(response));
+    t = 50 + response[0].timecode;
     v = response[0].usage;
   });
 
@@ -106,7 +112,7 @@ setInterval(function() {
   redraw();
 }, 1000);
 
-var w = 20, h = 128;
+var w = 16, h = 128;
 
 var x = d3.scale.linear()
     .domain([0, 1])
@@ -118,23 +124,52 @@ var y = d3.scale.linear()
 
 var chart = d3.select(".graph_cpu").append("svg")
     .attr("class", "chart")
-    .attr("width", w * data.length - 1)
-    .attr("height", h);
+    .attr("width", "100%")
+    .attr("height", h)
+    .attr("fill", "#ccc");
+
+  chart.append("line")
+    .attr("x1", 0)
+    .attr("x2", "100%")
+    .attr("y1", .5)
+    .attr("y2", .5)
+    .style("stroke", "#ccc");
+
+  chart.append("line")
+    .attr("x1", 0)
+    .attr("x2", "100%")
+    .attr("y1", 32 - .5)
+    .attr("y2", 32 - .5)
+    .style("stroke", "#ccc");
+
+  chart.append("line")
+    .attr("x1", 0)
+    .attr("x2", "100%")
+    .attr("y1", 64 - .5)
+    .attr("y2", 64 - .5)
+    .style("stroke", "#ccc");
+
+  chart.append("line")
+    .attr("x1", 0)
+    .attr("x2", "100%")
+    .attr("y1", 96 - .5)
+    .attr("y2", 96 - .5)
+    .style("stroke", "#ccc");
 
 chart.selectAll("rect")
     .data(data)
   .enter().append("rect")
     .attr("x", function(d, i) { return x(i) - .5; })
     .attr("y", function(d) { return h - y(d.usage) - .5; })
-    .attr("width", w)
+    .attr("width", h)
     .attr("height", function(d) { return y(d.usage); });
 
 chart.append("line")
     .attr("x1", 0)
-    .attr("x2", w * data.length)
+    .attr("x2", "100%")
     .attr("y1", h - .5)
     .attr("y2", h - .5)
-    .style("stroke", "#000");
+    .style("stroke", "red");
 
 function redraw() {
   var rect = chart.selectAll("rect")
@@ -145,7 +180,7 @@ function redraw() {
       .attr("y", function(d) { return h - y(d.usage) - .5; })
       .attr("width", w)
       .attr("height", function(d) { return y(d.usage); })
-    .transition()
+      .transition()
       .duration(1000)
       .attr("x", function(d, i) { return x(i) - .5; });
 
@@ -154,8 +189,6 @@ function redraw() {
       .attr("x", function(d, i) { return x(i) - .5; });
 
   rect.exit().transition()
-      .duration(1000)
-      .attr("x", function(d, i) { return x(i - 1) - .5; })
       .remove();
 }
 </script>
@@ -204,8 +237,8 @@ function redraw() {
               </tr>
             </table>
             <br/>
-            <svg class="graph_mem"></svg>
-            <script src="box_mem.js"></script>
+            <div class="graph_mem"></div>
+            <script type="text/javascript" src="box_mem.js"></script>
           </div>
         </div>
       </section>

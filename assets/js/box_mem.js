@@ -14,10 +14,10 @@ function chart_mem_data(param) {
 
   var x = d3.scale.linear()
     .domain([0, 100])
-    .range([0, "93%"]);
+    .range([0, "92%"]);
   var y = d3.scale.ordinal()
     .domain(data)
-    .rangeBands([16, 48]);
+    .rangeBands([16, 80]);
 
   chart_mem.selectAll("line")
     .data(x.ticks(4))
@@ -43,6 +43,8 @@ function chart_mem_data(param) {
     .attr("y", y)
     .attr("width", x)
     .attr("height", y.rangeBand());
+/*
+  // glitch: draw at an incorrect position
   chart_mem.selectAll("text")
     .data(data)
     .enter().append("text")
@@ -52,7 +54,7 @@ function chart_mem_data(param) {
     .attr("dy", ".35em") // vertical-align: middle
     .attr("text-anchor", "end") // text-align: right
     .text(String);
-
+*/
   chart_mem.append("line")
     .attr("y1", 0)
     .attr("y2", 72)
@@ -67,7 +69,7 @@ function rechart_mem_data(param) {
     .range([0, "93%"]);
   var y = d3.scale.ordinal()
     .domain(data)
-    .rangeBands([16, 48]);
+    .rangeBands([16, 80]);
 
   chart_mem.selectAll("rect")
     .data(data)
@@ -101,5 +103,5 @@ function reload_data() {
 }
 
 var socket = io.connect('http://localhost:1337');
-load_data();
-var interval = setInterval(reload_data, 5000);
+
+var interval = setInterval(reload_data, 2500);

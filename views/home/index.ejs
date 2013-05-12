@@ -29,22 +29,35 @@
           <div class="box_body">
             <table>
               <tr>
+                <td><b>Operating system:</b></td>
+                <td><%- sys_os_t %></td>
+              </tr>
+              <tr>
                 <td><b>Network hostname:</b></td>
                 <td><%- sys_hostname %></td>
               </tr>
               <tr>
-                <td><b>Operating system:</b></td>
-                <td><%- sys_os_t %></td>
+                <td><b>Uptime:</b></td>
+                <td><span id="sys_uptime">unknown</span> (raw: <%- sys_uptime %>)</td>
               </tr>
               <tr>
                 <td><b>Temporary directory:</b></td>
                 <td><%- sys_tmpdir %></td>
               </tr>
             </table>
-            <br />
-            <b>Processors:</b> <%- sys_cpu_t %> <%- sys_cpu %><br />
           </div>
         </div>
+
+        <script type="text/javascript">
+        var socket = io.connect('http://localhost:1337');
+          socket.request('/home/uptime', {
+            message: 'uptime'
+          }, function (response) {
+            //console.log(response);
+            document.getElementById('sys_uptime').innerHTML = response[0].uptime;
+          });
+        </script>
+
       </section>
 
       <section>
@@ -58,6 +71,10 @@
           </div>
           <div class="box_body">
             <table>
+              <tr>
+                <td><b>Processors:</b></td>
+                <td><%- sys_cpu_t %> <%- sys_cpu %></td>
+              </tr>
               <tr>
                 <td><b>CPU load average:</b></td>
                 <td><span id="cpu_load_avg">Gathering cpu load through socket.io...</span></td>
@@ -235,8 +252,11 @@ function redraw() {
                 <td><b>Free:</b></td>
                 <td><%- sys_mem_free %></td>
               </tr>
+              <tr>
+                <td><b>Swap:</b></td>
+                <td><span id="sys_swap">searching...</span></td>
+              </tr>
             </table>
-            <br/>
             <div class="graph_mem"></div>
             <script type="text/javascript" src="box_mem.js"></script>
           </div>
@@ -253,6 +273,7 @@ function redraw() {
             </div>
           </div>
           <div class="box_body">
+            <b>Network hostname:</b> <%- sys_hostname %><br /><br />
             <b>Interfaces:</b><br />
             <% _.each(sys_net, function (sys_net) { %>
             <li><%= JSON.stringify(sys_net) %></li>

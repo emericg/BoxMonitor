@@ -102,6 +102,19 @@ function reload_data() {
   });
 }
 
+function get_swap() {
+  if( chart_mem == null)
+    load_data();
+
+  socket.request('/static/swap', {
+    message: 'swap'
+  }, function (response) {
+    //console.log(response);
+    document.getElementById('sys_swap').innerHTML = JSON.stringify(response);
+  });
+}
+
 var socket = io.connect('http://localhost:1337');
 
-var interval = setInterval(reload_data, 2500);
+var interval1 = setInterval(get_swap, 2500);
+var interval2 = setInterval(reload_data, 2500);

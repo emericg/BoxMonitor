@@ -80,127 +80,6 @@
             <b>Frequencies:</b> <span id="cpu_freq">Gathering cpu frequencies through socket.io...</span><br/>
             <b>Instant usage:</b> <span id="cpu_usage">Gathering cpu usage through socket.io...</span><br/>
             <div class="box_zone"><div class="graph_cpu" height="128px"></div></div>
-
-<script type="text/javascript">
-
-// Connect to the node.js server
-var socket = io.connect(/*document.URL*/);
-
-// CPU GRAPH /////////////////////////////////////////////////////////
-
-var t = 1; // start time (seconds since epoch)
-var v = 1; // start value (subscribers)
-
-function usage_start() {
-  return {
-    timecode: t++,
-    usage: 0
-  };
-}
-
-function usage_graph() {
-  socket.request('/cpu/usage_avg', {
-    message: 'usage_avg'
-  }, function (response) {
-    //console.log(JSON.stringify(response));
-    t = 50 + response[0].timecode;
-    v = response[0].usage;
-  });
-
-  return {
-    timecode: t,
-    usage: v
-  };
-}
-
-var data = d3.range(50).map(usage_start); // starting dataset
-
-setInterval(function() {
-  data.shift();
-  data.push(usage_graph());
-  redraw();
-}, 1000);
-
-var w = 16, h = 128;
-
-var x = d3.scale.linear()
-    .domain([0, 1])
-    .range([0, w]);
-
-var y = d3.scale.linear()
-    .domain([0, 100])
-    .rangeRound([0, h]);
-
-var chart = d3.select(".graph_cpu").append("svg")
-    .attr("class", "chart")
-    .attr("width", "100%")
-    .attr("height", h)
-    .attr("fill", "#ccc");
-
-  chart.append("line")
-    .attr("x1", 0)
-    .attr("x2", "100%")
-    .attr("y1", .5)
-    .attr("y2", .5)
-    .style("stroke", "#ccc");
-
-  chart.append("line")
-    .attr("x1", 0)
-    .attr("x2", "100%")
-    .attr("y1", 32 - .5)
-    .attr("y2", 32 - .5)
-    .style("stroke", "#ccc");
-
-  chart.append("line")
-    .attr("x1", 0)
-    .attr("x2", "100%")
-    .attr("y1", 64 - .5)
-    .attr("y2", 64 - .5)
-    .style("stroke", "#ccc");
-
-  chart.append("line")
-    .attr("x1", 0)
-    .attr("x2", "100%")
-    .attr("y1", 96 - .5)
-    .attr("y2", 96 - .5)
-    .style("stroke", "#ccc");
-
-chart.selectAll("rect")
-    .data(data)
-  .enter().append("rect")
-    .attr("x", function(d, i) { return x(i) - .5; })
-    .attr("y", function(d) { return h - y(d.usage) - .5; })
-    .attr("width", h)
-    .attr("height", function(d) { return y(d.usage); });
-
-chart.append("line")
-    .attr("x1", 0)
-    .attr("x2", "100%")
-    .attr("y1", h - .5)
-    .attr("y2", h - .5)
-    .style("stroke", "red");
-
-function redraw() {
-  var rect = chart.selectAll("rect")
-      .data(data, function(d) { return d.timecode; });
-
-  rect.enter().insert("rect", "line")
-      .attr("x", function(d, i) { return x(i + 1) - .5; })
-      .attr("y", function(d) { return h - y(d.usage) - .5; })
-      .attr("width", w)
-      .attr("height", function(d) { return y(d.usage); })
-      .transition()
-      .duration(1000)
-      .attr("x", function(d, i) { return x(i) - .5; });
-
-  rect.transition()
-      .duration(1000)
-      .attr("x", function(d, i) { return x(i) - .5; });
-
-  rect.exit().transition()
-      .remove();
-}
-</script>
           </div>
         </div>
       </section>
@@ -307,6 +186,123 @@ function get_uptime() {
 
 setInterval(get_uptime, 1000);
 
+// CPU GRAPH /////////////////////////////////////////////////////////
+
+var t = 1; // start time (seconds since epoch)
+var v = 1; // start value (subscribers)
+var data_cpu = new Array();
+
+function usage_start() {
+  return {
+    timecode: t++,
+    usage: 0
+  };
+}
+
+function usage_graph() {
+  socket.request('/cpu/usage_avg', {
+    message: 'usage_avg'
+  }, function (response) {
+    //console.log(JSON.stringify(response));
+    t = 86 + response[0].timecode;
+    v = response[0].usage;
+  });
+
+  return {
+    timecode: t,
+    usage: v
+  };
+}
+
+// Initial datas
+data_cpu = d3.range(86).map(usage_start); // starting dataset
+
+setInterval(function() {
+  data_cpu.shift();
+  data_cpu.push(usage_graph());
+  redraw();
+}, 1000);
+
+var w = 16, h = 128;
+
+var x = d3.scale.linear()
+    .domain([0, 1])
+    .range([0, w]);
+
+var y = d3.scale.linear()
+    .domain([0, 100])
+    .rangeRound([0, h]);
+
+var chart = d3.select(".graph_cpu").append("svg")
+    .attr("class", "chart")
+    .attr("width", "100%")
+    .attr("height", h)
+    .attr("fill", "#ccc");
+
+  chart.append("line")
+    .attr("x1", 0)
+    .attr("x2", "100%")
+    .attr("y1", .5)
+    .attr("y2", .5)
+    .style("stroke", "#ccc");
+
+  chart.append("line")
+    .attr("x1", 0)
+    .attr("x2", "100%")
+    .attr("y1", 32 - .5)
+    .attr("y2", 32 - .5)
+    .style("stroke", "#ccc");
+
+  chart.append("line")
+    .attr("x1", 0)
+    .attr("x2", "100%")
+    .attr("y1", 64 - .5)
+    .attr("y2", 64 - .5)
+    .style("stroke", "#ccc");
+
+  chart.append("line")
+    .attr("x1", 0)
+    .attr("x2", "100%")
+    .attr("y1", 96 - .5)
+    .attr("y2", 96 - .5)
+    .style("stroke", "#ccc");
+
+chart.selectAll("rect")
+    .data(data_cpu)
+  .enter().append("rect")
+    .attr("x", function(d, i) { return x(i) - .5; })
+    .attr("y", function(d) { return h - y(d.usage) - .5; })
+    .attr("width", h)
+    .attr("height", function(d) { return y(d.usage); });
+
+chart.append("line")
+    .attr("x1", 0)
+    .attr("x2", "100%")
+    .attr("y1", h - .5)
+    .attr("y2", h - .5)
+    .style("stroke", "red");
+
+function redraw() {
+  var rect = chart.selectAll("rect")
+      .data(data_cpu, function(d) { return d.timecode; });
+
+  rect.enter().insert("rect", "line")
+      .attr("x", function(d, i) { return x(i + 1) - .5; })
+      .attr("y", function(d) { return h - y(d.usage) - .5; })
+      .attr("width", w)
+      .attr("height", function(d) { return y(d.usage); })
+      .transition()
+      .duration(1000)
+      .attr("x", function(d, i) { return x(i) - .5; });
+
+  rect.transition()
+      .duration(1000)
+      .attr("x", function(d, i) { return x(i) - .5; });
+
+  rect.exit().transition()
+      .remove();
+}
+
 // CPU ///////////////////////////////////////////////////////////////
 
 function freq() {
@@ -363,10 +359,10 @@ setInterval(usage_avg, 1000);
 // MEM ///////////////////////////////////////////////////////////////
 
 var chart_mem = null;
-var data = [];
+var data_mem = new Array();
 
 function chart_mem_data(param) {
-  data[0] = param;
+  data_mem[0] = param;
 
   chart_mem = d3.select(".graph_mem").append("svg")
     .attr("class", "chart_mem")
@@ -379,7 +375,7 @@ function chart_mem_data(param) {
     .domain([0, 100])
     .range([0, "92%"]);
   var y = d3.scale.ordinal()
-    .domain(data)
+    .domain(data_mem)
     .rangeBands([16, 80]);
 
   chart_mem.selectAll("line")
@@ -401,7 +397,7 @@ function chart_mem_data(param) {
     .text(String);
 
   chart_mem.selectAll("rect")
-    .data(data)
+    .data(data_mem)
     .enter().append("rect")
     .attr("y", y)
     .attr("width", x)
@@ -409,7 +405,7 @@ function chart_mem_data(param) {
 /*
   // glitch: draw at an incorrect position
   chart_mem.selectAll("text")
-    .data(data)
+    .data(data_mem)
     .enter().append("text")
     .attr("x", x)
     .attr("y", function(d) { return y(d) + y.rangeBand() / 2; })
@@ -425,17 +421,17 @@ function chart_mem_data(param) {
 }
 
 function rechart_mem_data(param) {
-  data[0] = param;
+  data_mem[0] = param;
 
   var x = d3.scale.linear()
     .domain([0, 100])
     .range([0, "93%"]);
   var y = d3.scale.ordinal()
-    .domain(data)
+    .domain(data_mem)
     .rangeBands([16, 80]);
 
   chart_mem.selectAll("rect")
-    .data(data)
+    .data(data_mem)
     .transition()
     .attr("y", y)
     .attr("width", x)

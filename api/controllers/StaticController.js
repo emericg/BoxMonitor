@@ -4,13 +4,14 @@
 ---------------------*/
 
 var wc = require('child_process').spawn('wc', ['-l', '/proc/swaps']);
+var fs = require('fs');
 
 var swap_string = new String('off');
 var swap_nb = 0;
 
 wc.stdout.on('data', function (data) {
   swap_nb = String(data).split(" ")[0] - 1;
-  console.log('stdout: ' + swap_nb + ' swap partition(s) found.');
+  console.log('wc stdout: ' + swap_nb + ' swap partition(s) found.');
 });
 
 var StaticController = {

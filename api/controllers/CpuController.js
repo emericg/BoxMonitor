@@ -69,13 +69,14 @@ var CpuController = {
   // To trigger this action locally, visit: `http://localhost:port/cpu/usage_avg`
   usage_avg: function (req,res) {
     var tc = new Date();
+    var percent = 0;
 
     // Get the value of a parameter
     //var param = req.param('message');
 
     for(var i = 0, len = os.cpus().length; i < len; i++) {
       var cpu = os.cpus()[i], total = 0, total_use = 0, idle = 0;
-      
+
       for(type in cpu.times) {
         total += cpu.times[type];
         if(type != 'idle')
@@ -84,7 +85,7 @@ var CpuController = {
 
       var delta_total = total - prev_total[i];
       var delta_use = total_use - prev_total_use[i];
-      var percent = ((delta_use / delta_total) * 100).toFixed(2);
+      percent += ((delta_use / delta_total) * 100);
 
       //log += "CPU "+i+": "+percent+"%<br />";
       //log += 'user: '+cpu.times.user+'|nice: '+cpu.times.nice+'|sys: '+cpu.times.sys+'|idle: '+cpu.times.idle+'|irq: '+cpu.times.irq+'<br />';
@@ -93,10 +94,12 @@ var CpuController = {
       prev_total_use[i] = total_use;
     }
 
+    percent /= os.cpus().length;
+
     // Create a json containing the infos
     var jsonObj = [{
       "timecode": tc.getUTCSeconds(),
-      "usage": percent
+      "usage": percent.toFixed(2)
     }]
 
     // Send a JSON response

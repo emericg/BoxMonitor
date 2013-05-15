@@ -129,6 +129,7 @@ section {
 .box_header {
   background-color: #252525;
   height: 64px;
+  overflow: auto;
 }
 
 .box_header .logo {

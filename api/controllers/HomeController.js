@@ -4,6 +4,7 @@
 ---------------------*/
 
 var os = require('os');
+var fs = require('fs');
 
 var sys_os_t = os.type() + ' (' + os.arch() + ') ' + os.release();
 var sys_cpu_t = ' [' + os.arch() + '] [' + os.endianness() + '] [' + os.cpus().length + ' cores]';
@@ -46,42 +47,41 @@ var HomeController = {
   uptime: function (req,res) {
     // Get the value of a parameter
     //var param = req.param('message');
-
+    
+    var uptime_num = os.uptime()
     var uptime_string = new String('');
 
-    var sys_uptime_hours = Math.floor(sys_uptime / 3600);
+    var sys_uptime_hours = Math.floor(uptime_num / 3600);
 
     if( sys_uptime_hours > 0 )
     {
       uptime_string = sys_uptime_hours + " hours ";
-      sys_uptime -= sys_uptime_hours * 3600;
+      uptime_num -= sys_uptime_hours * 3600;
     }
 
-    var sys_uptime_min = Math.floor(sys_uptime / 60);
+    var sys_uptime_min = Math.floor(uptime_num / 60);
 
     if( sys_uptime_min > 0 )
     {
       uptime_string += sys_uptime_min + " min ";
-      sys_uptime -= sys_uptime_min * 60;
+      uptime_num -= sys_uptime_min * 60;
     }
 
-    var sys_uptime_sec = Math.floor(sys_uptime);
+    var sys_uptime_sec = Math.floor(uptime_num);
 
     if( sys_uptime_sec > 0 )
     {
       uptime_string += sys_uptime_sec + " sec";
     }
 
-    console.log("h : " + sys_uptime_hours);
-    console.log("m : " + sys_uptime_min);
-    console.log("s : " + sys_uptime_sec);
-    console.log("up : " + uptime_string);
-
-    // Create a json containing the infos
+    // Create a JSON containing the infos
     var jsonObj = [{"uptime": uptime_string}]
 
-    // Send a JSON response
+    // Send the JSON response
     res.json(jsonObj);
+
+    // Log the JSON response
+    //console.log("up : " + uptime_string);
   },
 
 };

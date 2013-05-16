@@ -1,21 +1,21 @@
 {
-  "name" : "BoxMonitor",
-  "author" : "Emeric Grange <emeric.grange@gmail.com>",
-  "version" : "0.0.1",
+  "name": "BoxMonitor",
+  "version": "0.0.2",
   "description": "Simple linux box monitoring.",
-  "dependencies" : {
-    "sails" : "0.8.9"
-  },
-  "engines": {
-    "node": ">=0.10.0"
-  },
+  "author": "Emeric Grange <emeric.grange@gmail.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/emericg/BoxMonitor"
-  }    
+  },
+  "dependencies" : {
+    "sails" : ">= 0.8.91"
+  },
+  "engines": {
+    "node": ">= 0.10.0"
+  },
   "scripts": {
     "start": "node app.js",
     "debug": "node debug app.js"
   },
-  "main": "app.js",
+  "main": "app.js"
 }

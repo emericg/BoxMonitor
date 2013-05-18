@@ -8,95 +8,190 @@ body {
 }
 
 /* ********************************************************************* */
-/* Header ****************************************************************/
+/* Header * Handheld *************************************************** */
 
-header {
-  /*position: fixed;*/
-  background-color: #E0E0E0;
-  width: 100%;
-  height: 48px;
-}
+@media (max-width: 720px) {
 
-#header_zone {
-  width: 80%;
-  height: 100%;
-  min-width: 400px;
-  margin-left: 10%;
-  margin-right: 10%;
-}
+  header {
+    background-color: #252525;
+    width: 100%;
+    height: 64px;
+  }
 
-/* Header: title */
+  #header_zone {
+    width: 96%;
+    margin-left: 2%;
+    margin-right: 2%;
+  }
 
-#title {
-  display: inline-block;
-  float: left;
-  height: 100%;
-  color: #252525;
-}
+  /* Header: title */
 
-#title h1 {
-  display: inline-block;
-  text-decoration: bold;
-  margin-top: 4px;
-  font-size: 2em;
-}
+  #title {
+    padding: auto;
+    display: inline-block;
+    height: 100%;
+    color: #eeeeee;
+  }
 
-#title h2 {
-  display: inline-block;
-  vertical-align: super;
-  text-decoration: bold;
-  text-transform: uppercase;
-  font-size: 1.3em;
-}
+  #title h1 {
+    display: inline-block;
+    text-decoration: bold;
+    margin-top: 4px;
+    font-size: 1.8em;
+  }
 
-/* Header: navigation */
+  #title h2 {
+    display: inline-block;
+    vertical-align: super;
+    text-decoration: bold;
+    text-transform: uppercase;
+    font-size: 1.2em;
+  }
 
-nav {
-  color: white;
-  display: inline-block;
-  height: 100%;
-  float: right;
-  font-size: 1.4em;
-  margin-top: 8px;
-}
+  /* Header: navigation */
 
-nav ul {
-  color: white;
-  list-style-type: none;
-}
+  nav {
+    color: white;
+    background-color: #222222;
+    display: block;
+    height: 100%;
+    font-size: 1em;
+    margin-bottom: 1%;
+  }
 
-nav li {
-  color: white;
-  vertical-align: middle;
-  display: inline-block;
-  margin-right: 10px;
-}
+  nav ul {
+    color: white;
+    list-style-type: none;
+  }
 
-nav a {
-  color: white;
-  padding-bottom: 3px;
-  text-decoration: none;
-}
+  nav li {
+    color: white;
+    vertical-align: middle;
+    display: inline-block;
+    margin-right: 10px;
+  }
 
-nav a:hover {
-    color: #252525;
+  nav a {
+    color: white;
+    padding-bottom: 3px;
+    text-decoration: none;
+  }
+
+  nav a:hover {
+    color: white;
     border-bottom: 2px solid white;
+  }
+}
+
+/* ********************************************************************* */
+/* Header * Desktop **************************************************** */
+
+@media (min-width: 721px) {
+
+  header {
+    /*position: fixed;*/
+    background-color: #252525;
+    width: 100%;
+    height: 48px;
+  }
+
+  #header_zone {
+    width: 80%;
+    height: 100%;
+    min-width: 400px;
+    margin-left: 10%;
+    margin-right: 10%;
+  }
+
+  /* Header: title */
+
+  #title {
+    display: inline-block;
+    float: left;
+    height: 100%;
+    color: #eeeeee;
+  }
+
+  #title h1 {
+    display: inline-block;
+    text-decoration: bold;
+    margin-top: 4px;
+    font-size: 2em;
+  }
+
+  #title h2 {
+    display: inline-block;
+    vertical-align: super;
+    text-decoration: bold;
+    text-transform: uppercase;
+    font-size: 1.3em;
+  }
+
+  /* Header: navigation */
+
+  nav {
+    color: white;
+    display: inline-block;
+    height: 100%;
+    float: right;
+    font-size: 1.4em;
+    margin-top: 8px;
+  }
+
+  nav ul {
+    color: white;
+    list-style-type: none;
+  }
+
+  nav li {
+    color: white;
+    vertical-align: middle;
+    display: inline-block;
+    margin-right: 10px;
+  }
+
+  nav a {
+    color: white;
+    padding-bottom: 3px;
+    text-decoration: none;
+  }
+
+  nav a:hover {
+    color: white;
+    border-bottom: 2px solid white;
+  }
 }
 
 /* ******************************************************************** */
 /* Page body ********************************************************** */
 
-#page {
-  background-color: #eeeeee;
-  width: 80%;
-  min-width: 400px;
-  min-height: 1024px;
-  margin-left: 5%;
-  margin-right: 5%;
-  padding-top: 3%;
-  padding-left: 5%;
-  padding-right: 5%;
-  padding-bottom: 3%;
+@media (max-width: 720px) {
+
+  #page {
+    background-color: #eeeeee;
+    width: 96%;
+    margin-left: 1%;
+    margin-right: 1%;
+    padding-top: 3%;
+    padding-left: 1%;
+    padding-right: 1%;
+    padding-bottom: 3%;
+  }
+}
+
+@media (min-width: 721px) {
+
+  #page {
+    background-color: #eeeeee;
+    width: 84%;
+    min-width: 400px;
+    margin-left: 4%;
+    margin-right: 4%;
+    padding-top: 3%;
+    padding-left: 4%;
+    padding-right: 4%;
+    padding-bottom: 3%;
+  }
 }
 
 section {
@@ -107,16 +202,6 @@ section {
 /* ******************************************************************** */
 /* Box elements ******************************************************* */
 
-.box_square {
-  float: left;
-  background-color: white;
-  display: inline-block;
-  width: 48%;
-  height: 256px;
-  margin-right: 1%;
-  overflow: hidden;
-}
-
 .box_wide {
   background-color: white;
   width: 100%;
@@ -124,53 +209,134 @@ section {
   overflow: hidden;
 }
 
-/* ******************************************************************** */
+@media (max-width: 720px) {
 
-.box_header {
-  background-color: #252525;
-  height: 64px;
-  overflow: auto;
+  .box_square {
+    background-color: white;
+    width: 100%;
+    min-height: 256px;
+    overflow: hidden;
+  }
 }
 
-.box_header .logo {
-  width: 32px;
-  height: 32px;
-  margin: 16px;
-  float: left;
-}
+@media (min-width: 721px) {
 
-.box_header .title {
-  vertical-align: middle;
-  height: 48px;
-  margin-top: 8px;
-  float: left;
-  color: white;
-}
-
-.box_header .title h1 {
-  font-size: 1.4em;
-  font-weight: bold;
-}
-
-.box_header .title h2 {
-  font-size: 1em;
-}
-
-.box_header .infos {
-  vertical-align: middle;
-  float: right;
-  height: 32px;
-  padding: 13px;
-  font-size: 2em;
-  font-weight: bold;
-  color: white;
+  .box_square {
+    float: left;
+    background-color: white;
+    display: inline-block;
+    width: 48%;
+    height: 256px;
+    margin-right: 1%;
+    overflow: hidden;
+  }
 }
 
 /* ******************************************************************** */
 
-.box_body {
-  background-color: white;
-  padding: 2%;
+@media (max-width: 720px) {
+
+  .box_header {
+    background-color: #252525;
+    height: 48px;
+    overflow: auto;
+  }
+
+  .box_header .logo {
+    width: 32px;
+    height: 32px;
+    margin: 8px;
+    float: left;
+  }
+
+  .box_header .title {
+    vertical-align: middle;
+    height: 32px;
+    margin-top: 8px;
+    float: left;
+    color: white;
+  }
+
+  .box_header .title h1 {
+    font-size: 1em;
+    font-weight: bold;
+  }
+
+  .box_header .title h2 {
+    font-size: 0.8em;
+  }
+
+  .box_header .infos {
+    vertical-align: middle;
+    float: right;
+    height: 32px;
+    padding: 13px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+  }
+}
+
+@media (min-width: 721px) {
+
+  .box_header {
+    background-color: #252525;
+    height: 64px;
+    overflow: auto;
+  }
+
+  .box_header .logo {
+    width: 32px;
+    height: 32px;
+    margin: 16px;
+    float: left;
+  }
+
+  .box_header .title {
+    vertical-align: middle;
+    height: 48px;
+    margin-top: 8px;
+    float: left;
+    color: white;
+  }
+
+  .box_header .title h1 {
+    font-size: 1.4em;
+    font-weight: bold;
+  }
+
+  .box_header .title h2 {
+    font-size: 1em;
+  }
+
+  .box_header .infos {
+    vertical-align: middle;
+    float: right;
+    height: 32px;
+    padding: 16px;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: white;
+  }
+}
+
+/* ******************************************************************** */
+
+@media (max-width: 720px) {
+
+  .box_body {
+    background-color: white;
+    padding: 2%;
+    font-size: 0.8em;
+  }
+}
+
+@media (min-width: 721px) {
+
+  .box_body {
+    background-color: white;
+    padding: 2%;
+  }
 }
 
 .box_zone {
@@ -187,10 +353,24 @@ section {
 
 footer {
   min-height: 64px;
-  padding-left: 10%;
-  padding-right: 10%;
   border-top: 1px solid gray;
   background-color: #FFFFFF;
+}
+
+@media (max-width: 720px) {
+
+  footer {
+    padding-left: 2%;
+    padding-right: 2%;
+  }
+}
+
+@media (min-width: 721px) {
+
+  footer {
+    padding-left: 10%;
+    padding-right: 10%;
+  }
 }
 
 /* ******************************************************************** */

@@ -66,9 +66,8 @@ body {
 
   nav li {
     color: white;
-    vertical-align: middle;
     display: inline-block;
-    margin-right: 10px;
+    margin-right: 12px;
   }
 
   nav a {
@@ -147,7 +146,7 @@ body {
     color: white;
     vertical-align: middle;
     display: inline-block;
-    margin-right: 10px;
+    margin-left: 8px;
   }
 
   nav a {
@@ -368,9 +367,8 @@ section {
   background-color: #F5F5F5;
   border-top: 2px solid gray;
   margin-top: 2%;
-  padding: 2%;
-  width: 96%;
-  height: 96%;
+  width: 100%;
+  height: 128px;
 }
 
 /* ******************************************************************** */
@@ -378,6 +376,7 @@ section {
 
 footer {
   min-height: 64px;
+  padding-top: 8px;
   border-top: 1px solid gray;
   background-color: #FFFFFF;
 }

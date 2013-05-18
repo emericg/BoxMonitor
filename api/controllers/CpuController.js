@@ -24,16 +24,14 @@ var CpuController = {
   // To trigger this action locally, visit: `http://localhost:port/cpu/load_avg`
   load_avg: function (req,res)
   {
-    var tc = new Date();
-
     // Get the value of a parameter
     //var param = req.param('message');
 
     // Create a json containing the infos
-    var jsonObj = [{"timecode": tc.getUTCSeconds()}, {
-      "1": os.loadavg()[0].toFixed(3),
-      "5": os.loadavg()[1].toFixed(3),
-      "15": os.loadavg()[2].toFixed(3)
+    var jsonObj = [{
+      "one": os.loadavg()[0].toFixed(3),
+      "five": os.loadavg()[1].toFixed(3),
+      "fifteen": os.loadavg()[2].toFixed(3)
     }]
 
     // Send a JSON response
@@ -106,8 +104,8 @@ var CpuController = {
     res.json(jsonObj);
   },
 
-  // To trigger this action locally, visit: `http://localhost:port/cpu/freq`
-  freq: function (req,res) {
+  // To trigger this action locally, visit: `http://localhost:port/cpu/freqs`
+  freqs: function (req,res) {
     var tc = new Date();
     var freqs = 0;
 

@@ -17,6 +17,8 @@ var sys_mem_mib = (os.totalmem() / 1048576).toFixed() + ' Mib';
 var sys_mem_used = ((os.totalmem() - os.freemem()) / 1048576).toFixed() + ' Mib';
 var sys_mem_free = (os.freemem() / 1048576).toFixed() + ' Mib';
 
+var sys_swap_mib = new String('off');
+
 var sys_hostname = os.hostname();
 var sys_uptime = os.uptime();
 var sys_net = os.networkInterfaces();
@@ -38,6 +40,7 @@ var HomeController = {
       sys_mem_mib: sys_mem_mib,
       sys_mem_used: sys_mem_used,
       sys_mem_free: sys_mem_free,
+      sys_swap_mib: sys_swap_mib,
       sys_net: sys_net,
       sys_tmpdir: sys_tmpdir
     });

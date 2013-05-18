@@ -96,11 +96,11 @@ body {
   }
 
   #header_zone {
-    width: 80%;
+    width: 84%;
     height: 100%;
     min-width: 400px;
-    margin-left: 10%;
-    margin-right: 10%;
+    margin-left: 8%;
+    margin-right: 8%;
   }
 
   /* Header: title */
@@ -195,7 +195,7 @@ body {
 }
 
 section {
-  min-height: 256px;
+  min-height: 192px;
   margin-bottom: 3%;
 }
 
@@ -205,7 +205,7 @@ section {
 .box_wide {
   background-color: white;
   width: 100%;
-  min-height: 256px;
+  min-height: 192px;
   overflow: hidden;
 }
 
@@ -214,8 +214,18 @@ section {
   .box_square {
     background-color: white;
     width: 100%;
-    min-height: 256px;
+    min-height: 192px;
     overflow: hidden;
+  }
+
+  .two_panes {
+    display: block;
+    margin-bottom: 1%;
+  }
+
+  .three_panes {
+    display: block;
+    margin-bottom: 1%;
   }
 }
 
@@ -225,10 +235,25 @@ section {
     float: left;
     background-color: white;
     display: inline-block;
-    width: 48%;
-    height: 256px;
-    margin-right: 1%;
+    width: 49%;
+    height: 192px;
     overflow: hidden;
+  }
+
+  .box_spacer {
+    float: left;
+    display: inline-block;
+    min-width: 2%;
+  }
+
+  .two_panes {
+    display: inline-block;
+    min-width: 45%;
+  }
+
+  .three_panes {
+    display: inline-block;
+    min-width: 33%;
   }
 }
 
@@ -239,7 +264,7 @@ section {
   .box_header {
     background-color: #252525;
     height: 48px;
-    overflow: auto;
+    overflow: hidden;
   }
 
   .box_header .logo {
@@ -368,15 +393,15 @@ footer {
 @media (min-width: 721px) {
 
   footer {
-    padding-left: 10%;
-    padding-right: 10%;
+    padding-left: 8%;
+    padding-right: 8%;
   }
 }
 
 /* ******************************************************************** */
 /* Graphs ************************************************************* */
 
-.chart rect {
+.chart_cpu rect {
   stroke: white;
   fill: #8ACB54;
 }

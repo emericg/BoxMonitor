@@ -2,10 +2,9 @@
 <html lang="en">
 
   <head>
-    <meta content="text/html; charset=utf-8" http-equiv="content-type">
     <meta charset="utf-8" />
-    <meta content="Emeric" name="author" />
-    <meta content="Realtime system monitoring" name="description" />
+    <meta name="description" content="Realtime system monitoring" />
+    <meta name="author" content="Emeric Grange <emeric.grange@gmail.com>" />
     <meta name="viewport" content="width=device-width, user-scalable=no" />
     <link rel="icon" type="image/svg" href="/public/favicon.svg" />
     <title><%- title %></title>
@@ -24,32 +23,42 @@
             <img class="logo" src="images/round/gear.png" >
             <div class="title">
               <h1 class="orange">System informations</h1>
-              <h2 class="orange">A lot of system informations in this box</h2>
+              <h2 class="orange">A lot of generic informations in this box</h2>
             </div>
           </div>
           <div class="box_body">
-            <table>
-              <tr>
-                <td><b>Operating system:</b></td>
-                <td><%- sys_os_t %></td>
-              </tr>
-              <tr>
-                <td><b>Network hostname:</b></td>
-                <td><%- sys_hostname %></td>
-              </tr>
-              <tr>
-                <td><b>Temporary directory:</b></td>
-                <td><%- sys_tmpdir %></td>
-              </tr>
-              <tr>
-                <td><b>Uptime:</b></td>
-                <td><span id="sys_uptime">loading...</span></td>
-              </tr>
-              <tr>
-                <td><b>Processors:</b></td>
-                <td><%- sys_cpu_t %> <%- sys_cpu %></td>
-              </tr>
-            </table>
+            <div class="two_panes">
+              <table>
+                <tr>
+                  <td><b>System:</b></td>
+                  <td><%- sys_os_t %></td>
+                </tr>
+                <tr>
+                  <td><b>Uptime:</b></td>
+                  <td><span id="sys_uptime">loading...</span></td>
+                </tr>
+                <tr>
+                  <td><b>Hostname:</b></td>
+                  <td><%- sys_hostname %></td>
+                </tr>
+              </table>
+            </div>
+            <div class="two_panes">
+              <table>
+                <tr>
+                  <td><b>CPU:</b></td>
+                  <td><%- sys_cpu %></td>
+                </tr>
+                <tr>
+                  <td><b>RAM:</b></td>
+                  <td><%- sys_mem_mib %></td>
+                </tr>
+                <tr>
+                  <td><b>Swap:</b></td>
+                  <td><%- sys_swap_mib %></td>
+                </tr>
+              </table>
+            </div>
           </div>
         </div>
       </section>
@@ -62,43 +71,18 @@
               <h1 class="green">CPU graph</h1>
               <h2 class="green">Let's try socket.io!</h2>
             </div>
+            <div class="infos"><p class="green"><span id="cpu_usage_percent">0</span>%</p></div>
           </div>
           <div class="box_body">
-            <table>
-              <tr>
-                <td><b>CPU load average:</b></td>
-                <td><span id="cpu_load_avg">Gathering cpu load through socket.io...</span></td>
-              </tr>
-              <tr>
-                <td><b>CPU usage average:</b></td>
-                <td><span id="cpu_usage_avg">Gathering average cpu usage through socket.io...</span></td>
-              </tr>
-              <tr>
-                <td><b>CPU frequencies average:</b></td>
-                <td><span id="cpu_freq_avg">Gathering average cpu frequency through socket.io...</span></td>
-              </tr>
-            </table>
-            <b>Frequencies:</b> <span id="cpu_freq">Gathering cpu frequencies through socket.io...</span><br/>
-            <b>Instant usage:</b> <span id="cpu_usage">Gathering cpu usage through socket.io...</span><br/>
+            CPU model: <b><%- sys_cpu %></b> <%- sys_cpu_t %> <br />
+            CPU loads: <b><span id="load_one">loading</span></b> (1 mins) <b><span id="load_five">loading</span></b> (5 mins) <b><span id="load_fifteen">loading</span></b> (15 min)<br />
+            CPU is currently running at <b><span id="freq_avg">loading</span></b> Mhz (average)<br />
             <div class="box_zone"><div class="graph_cpu" height="128px"></div></div>
           </div>
         </div>
       </section>
 
       <section>
-        <div class="box_square">
-          <div class="box_header">
-            <img class="logo" src="images/round/gear.png" >
-            <div class="title">
-              <h1 class="pink">Disks</h1>
-              <h2 class="pink">Detailed disks usage</h2>
-            </div>
-          </div>
-          <div class="box_body">
-            <span id="disks_overview">loading...</span>
-          </div>
-        </div>
-
         <div class="box_square">
           <div class="box_header">
             <img class="logo" src="images/round/usage.png" >
@@ -116,11 +100,7 @@
               </tr>
               <tr>
                 <td><b>Used:</b></td>
-                <td><%- sys_mem_used %></td>
-              </tr>
-              <tr>
-                <td><b>Free:</b></td>
-                <td><%- sys_mem_free %></td>
+                <td><%- sys_mem_used %> / <b>Free:</b> <%- sys_mem_free %></td>
               </tr>
               <tr>
                 <td><b>Swap:</b></td>
@@ -130,25 +110,25 @@
             <div class="graph_mem"></div>
           </div>
         </div>
-      </section>
-
-      <section>
+        <div class="box_spacer"><br /></div>
         <div class="box_square">
           <div class="box_header">
             <img class="logo" src="images/round/bdd.png" >
             <div class="title">
               <h1 class="blue">Network</h1>
-              <h2 class="blue">Active network interfaces for '<%- sys_hostname %>'</h2>
+              <h2 class="blue">Active network interfaces</h2>
             </div>
           </div>
           <div class="box_body">
+            <b>Hostname:</b> <%- sys_hostname %><br />
             <b>Interfaces:</b><br />
             <% _.each(sys_net, function (sys_net) { %>
             <li><%= JSON.stringify(sys_net) %></li><% }) %><br />
-            <b>Hostname:</b> <%- sys_hostname %>
           </div>
         </div>
+      </section>
 
+      <section>
         <div class="box_square">
           <div class="box_header">
             <img class="logo" src="images/round/gear.png" >
@@ -160,6 +140,20 @@
           <div class="box_body">
             <% _.each(sys_cpus, function (sys_cpus) { %>
             <li><%= sys_cpus.model %></li><% }) %>
+          </div>
+        </div>
+        <div class="box_spacer"><br /></div>
+        <div class="box_square">
+          <div class="box_header">
+            <img class="logo" src="images/round/gear.png" >
+            <div class="title">
+              <h1 class="pink">Disks</h1>
+              <h2 class="pink">Detailed disks usage</h2>
+            </div>
+          </div>
+          <div class="box_body">
+            Temporary directory: <b><%- sys_tmpdir %></b><br />
+            Disks usage: <span id="disks_overview">loading...</span>
           </div>
         </div>
       </section>
@@ -187,26 +181,36 @@ function get_uptime() {
 
 setInterval(get_uptime, 1000);
 
-// CPU GRAPH /////////////////////////////////////////////////////////
+// CPU ///////////////////////////////////////////////////////////////
 
-var t = 1; // start time (seconds since epoch)
-var v = 1; // start value (subscribers)
-var data_cpu = new Array();
-
-function usage_start() {
-  return {
-    timecode: t++,
-    usage: 0
-  };
+function cpu_freq_avg() {
+  socket.request('/cpu/freq_avg', {
+    message: 'freq_avg'
+  }, function (response) {
+    //console.log(JSON.stringify(response));
+    document.getElementById('freq_avg').innerHTML = response[0].freq_avg;
+  });
 }
 
-function usage_graph() {
+function cpu_load_avg() {
+  socket.request('/cpu/load_avg', {
+    message: 'load_avg'
+  }, function (response) {
+    //console.log(JSON.stringify(response));
+    document.getElementById('load_one').innerHTML = response[0].one;
+    document.getElementById('load_five').innerHTML = response[0].five;
+    document.getElementById('load_fifteen').innerHTML = response[0].fifteen;
+  });
+}
+
+function cpu_usage_graph() {
   socket.request('/cpu/usage_avg', {
     message: 'usage_avg'
   }, function (response) {
     //console.log(JSON.stringify(response));
-    t = 86 + response[0].timecode;
+    t = 30 + response[0].timecode;
     v = response[0].usage;
+    document.getElementById('cpu_usage_percent').innerHTML = v;
   });
 
   return {
@@ -215,12 +219,30 @@ function usage_graph() {
   };
 }
 
-// Initial datas
-data_cpu = d3.range(86).map(usage_start); // starting dataset
+function cpu_usage_start() {
+  return {
+    timecode: t++,
+    usage: 0
+  };
+}
+
+cpu_load_avg();
+cpu_freq_avg();
+
+setInterval(cpu_load_avg, 10000);
+setInterval(cpu_freq_avg, 1000);
+
+// CPU GRAPH /////////////////////////////////////////////////////////
+
+var t = 0; // start time (seconds since epoch)
+var v = 0; // start value (subscribers)
+
+// Initial dataset
+var data_cpu = d3.range(30).map(cpu_usage_start);
 
 setInterval(function() {
   data_cpu.shift();
-  data_cpu.push(usage_graph());
+  data_cpu.push(cpu_usage_graph());
   redraw();
 }, 1000);
 
@@ -234,49 +256,49 @@ var y = d3.scale.linear()
     .domain([0, 100])
     .rangeRound([0, h]);
 
-var chart = d3.select(".graph_cpu").append("svg")
-    .attr("class", "chart")
+var chart_cpu = d3.select(".graph_cpu").append("svg")
+    .attr("class", "chart_cpu")
     .attr("width", "100%")
     .attr("height", h)
     .attr("fill", "#ccc");
 
-  chart.append("line")
+  chart_cpu.append("line")
     .attr("x1", 0)
     .attr("x2", "100%")
     .attr("y1", .5)
     .attr("y2", .5)
     .style("stroke", "#ccc");
 
-  chart.append("line")
+  chart_cpu.append("line")
     .attr("x1", 0)
     .attr("x2", "100%")
     .attr("y1", 32 - .5)
     .attr("y2", 32 - .5)
     .style("stroke", "#ccc");
 
-  chart.append("line")
+  chart_cpu.append("line")
     .attr("x1", 0)
     .attr("x2", "100%")
     .attr("y1", 64 - .5)
     .attr("y2", 64 - .5)
     .style("stroke", "#ccc");
 
-  chart.append("line")
+  chart_cpu.append("line")
     .attr("x1", 0)
     .attr("x2", "100%")
     .attr("y1", 96 - .5)
     .attr("y2", 96 - .5)
     .style("stroke", "#ccc");
 
-chart.selectAll("rect")
+chart_cpu.selectAll("rect")
     .data(data_cpu)
-  .enter().append("rect")
+    .enter().append("rect")
     .attr("x", function(d, i) { return x(i) - .5; })
     .attr("y", function(d) { return h - y(d.usage) - .5; })
     .attr("width", h)
     .attr("height", function(d) { return y(d.usage); });
 
-chart.append("line")
+chart_cpu.append("line")
     .attr("x1", 0)
     .attr("x2", "100%")
     .attr("y1", h - .5)
@@ -284,7 +306,7 @@ chart.append("line")
     .style("stroke", "red");
 
 function redraw() {
-  var rect = chart.selectAll("rect")
+  var rect = chart_cpu.selectAll("rect")
       .data(data_cpu, function(d) { return d.timecode; });
 
   rect.enter().insert("rect", "line")
@@ -303,59 +325,6 @@ function redraw() {
   rect.exit().transition()
       .remove();
 }
-
-// CPU ///////////////////////////////////////////////////////////////
-
-function freq() {
-  socket.request('/cpu/freq', {
-    message: 'freq'
-  }, function (response) {
-    //console.log(JSON.stringify(response));
-    document.getElementById('cpu_freq').innerHTML = JSON.stringify(response);
-  });
-}
-
-function freq_avg() {
-  socket.request('/cpu/freq_avg', {
-    message: 'freq_avg'
-  }, function (response) {
-    //console.log(JSON.stringify(response));
-    document.getElementById('cpu_freq_avg').innerHTML = JSON.stringify(response);
-  });
-}
-
-function load_avg() {
-  socket.request('/cpu/load_avg', {
-    message: 'load_avg'
-  }, function (response) {
-    //console.log(JSON.stringify(response));
-    document.getElementById('cpu_load_avg').innerHTML = JSON.stringify(response);
-  });
-}
-
-function usage() {
-  socket.request('/cpu/usage', {
-    message: 'usage'
-  }, function (response) {
-    //console.log(JSON.stringify(response));
-    document.getElementById('cpu_usage').innerHTML = JSON.stringify(response);
-  });
-}
-
-function usage_avg() {
-  socket.request('/cpu/usage_avg', {
-    message: 'usage_avg'
-  }, function (response) {
-    //console.log(JSON.stringify(response));
-    document.getElementById('cpu_usage_avg').innerHTML = JSON.stringify(response);
-  });
-}
-
-setInterval(load_avg, 2500);
-setInterval(freq, 1000);
-setInterval(freq_avg, 1000);
-setInterval(usage, 1000);
-setInterval(usage_avg, 1000);
 
 // MEM ///////////////////////////////////////////////////////////////
 
@@ -402,6 +371,14 @@ function chart_mem_data(param) {
     .enter().append("rect")
     .attr("y", y)
     .attr("width", x)
+    .attr("height", y.rangeBand());
+
+  chart_mem.selectAll("rect_cached")
+    .data(data_mem)
+    .enter().append("rect_cached")
+    .attr("x", 75)
+    .attr("y", y)
+    .attr("width", 5)
     .attr("height", y.rangeBand());
 /*
   // glitch: draw at an incorrect position

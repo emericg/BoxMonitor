@@ -77,7 +77,7 @@
             CPU model: <b><%- sys_cpu %></b> <%- sys_cpu_t %> <br />
             CPU loads: <b><span id="load_one">loading</span></b> (1 mins) <b><span id="load_five">loading</span></b> (5 mins) <b><span id="load_fifteen">loading</span></b> (15 min)<br />
             CPU is currently running at <b><span id="freq_avg">loading</span></b> Mhz (average)<br />
-            <div class="box_zone"><div class="graph_cpu" height="128px"></div></div>
+            <div id="graph_cpu_id"><div class="box_zone"><div class="graph_cpu" height="128px"></div></div></div>
           </div>
         </div>
       </section>
@@ -208,7 +208,7 @@ function cpu_usage_graph() {
     message: 'usage_avg'
   }, function (response) {
     //console.log(JSON.stringify(response));
-    t = 30 + response[0].timecode;
+    t = bars + response[0].timecode;
     v = response[0].usage;
     document.getElementById('cpu_usage_percent').innerHTML = v;
   });
@@ -228,6 +228,7 @@ function cpu_usage_start() {
 
 cpu_load_avg();
 cpu_freq_avg();
+cpu_usage_graph();
 
 setInterval(cpu_load_avg, 10000);
 setInterval(cpu_freq_avg, 1000);
@@ -236,38 +237,34 @@ setInterval(cpu_freq_avg, 1000);
 
 var t = 0; // start time (seconds since epoch)
 var v = 0; // start value (subscribers)
+var w = 16, h = 128;
+var bars = 0;
+var chart_cpu_width = 0;
 
 // Initial dataset
-var data_cpu = d3.range(30).map(cpu_usage_start);
+var chart_cpu = null;
+var data_cpu = null;
 
-setInterval(function() {
-  data_cpu.shift();
-  data_cpu.push(cpu_usage_graph());
-  redraw();
-}, 1000);
+function cpu_draw() {
 
-var w = 16, h = 128;
+  chart_cpu_width = $("#graph_cpu_id").width();
+  bars = (chart_cpu_width / w).toFixed();
 
-var x = d3.scale.linear()
-    .domain([0, 1])
-    .range([0, w]);
+  data_cpu = d3.range(bars).map(cpu_usage_start);
 
-var y = d3.scale.linear()
-    .domain([0, 100])
-    .rangeRound([0, h]);
+  var x = d3.scale.linear()
+      .domain([0, 1])
+      .range([0, w]);
 
-var chart_cpu = d3.select(".graph_cpu").append("svg")
+  var y = d3.scale.linear()
+      .domain([0, 100])
+      .rangeRound([0, h]);
+
+  chart_cpu = d3.select(".graph_cpu").append("svg")
     .attr("class", "chart_cpu")
     .attr("width", "100%")
     .attr("height", h)
     .attr("fill", "#ccc");
-
-  chart_cpu.append("line")
-    .attr("x1", 0)
-    .attr("x2", "100%")
-    .attr("y1", .5)
-    .attr("y2", .5)
-    .style("stroke", "#ccc");
 
   chart_cpu.append("line")
     .attr("x1", 0)
@@ -290,22 +287,46 @@ var chart_cpu = d3.select(".graph_cpu").append("svg")
     .attr("y2", 96 - .5)
     .style("stroke", "#ccc");
 
-chart_cpu.selectAll("rect")
-    .data(data_cpu)
-    .enter().append("rect")
-    .attr("x", function(d, i) { return x(i) - .5; })
-    .attr("y", function(d) { return h - y(d.usage) - .5; })
-    .attr("width", h)
-    .attr("height", function(d) { return y(d.usage); });
+  chart_cpu.selectAll("rect")
+      .data(data_cpu)
+      .enter().append("rect")
+      .attr("x", function(d, i) { return x(i) - .5; })
+      .attr("y", function(d) { return h - y(d.usage) - .5; })
+      .attr("width", h)
+      .attr("height", function(d) { return y(d.usage); });
 
-chart_cpu.append("line")
-    .attr("x1", 0)
-    .attr("x2", "100%")
-    .attr("y1", h - .5)
-    .attr("y2", h - .5)
-    .style("stroke", "red");
+  chart_cpu.append("line")
+      .attr("x1", 0)
+      .attr("x2", "100%")
+      .attr("y1", h)
+      .attr("y2", h)
+      .style("stroke", "red");
+}
 
-function redraw() {
+function cpu_redraw() {
+
+  // Check if we need to resize / rescale the graph
+  var newwidth = $("#graph_cpu_id").width();
+
+  if( newwidth != chart_cpu_width ) {
+    // Restart the graph with a different number of bars
+    bars = (newwidth/w).toFixed();
+    data_cpu = d3.range(bars).map(cpu_usage_start);
+
+    // Try to rescale the existing bars (buggy)
+    //w *= (newwidth / chart_cpu_width);
+
+    chart_cpu_width = newwidth;
+  }
+
+  var x = d3.scale.linear()
+      .domain([0, 1])
+      .range([0, w]);
+
+  var y = d3.scale.linear()
+      .domain([0, 100])
+      .rangeRound([0, h]);
+
   var rect = chart_cpu.selectAll("rect")
       .data(data_cpu, function(d) { return d.timecode; });
 
@@ -322,16 +343,24 @@ function redraw() {
       .duration(1000)
       .attr("x", function(d, i) { return x(i) - .5; });
 
-  rect.exit().transition()
+  rect.exit()
       .remove();
 }
+
+cpu_draw();
+
+setInterval(function() {
+  data_cpu.shift();
+  data_cpu.push(cpu_usage_graph());
+  cpu_redraw();
+}, 1000);
 
 // MEM ///////////////////////////////////////////////////////////////
 
 var chart_mem = null;
 var data_mem = new Array();
 
-function chart_mem_data(param) {
+function mem_draw(param) {
   data_mem[0] = param;
 
   chart_mem = d3.select(".graph_mem").append("svg")
@@ -346,7 +375,7 @@ function chart_mem_data(param) {
     .range([0, "92%"]);
   var y = d3.scale.ordinal()
     .domain(data_mem)
-    .rangeBands([16, 80]);
+    .rangeBands([8, 64]);
 
   chart_mem.selectAll("line")
     .data(x.ticks(4))
@@ -398,7 +427,7 @@ function chart_mem_data(param) {
     .style("stroke", "#000");
 }
 
-function rechart_mem_data(param) {
+function mem_redraw(param) {
   data_mem[0] = param;
 
   var x = d3.scale.linear()
@@ -406,7 +435,7 @@ function rechart_mem_data(param) {
     .range([0, "93%"]);
   var y = d3.scale.ordinal()
     .domain(data_mem)
-    .rangeBands([16, 80]);
+    .rangeBands([8, 64]);
 
   chart_mem.selectAll("rect")
     .data(data_mem)
@@ -417,43 +446,42 @@ function rechart_mem_data(param) {
 }
 
 function load_data() {
-  socket.request('/mem/usage_percent', {
-    message: 'usage_percent'
+  socket.request('/mem/mem_usage', {
+    message: 'mem_usage'
   }, function (response) {
     //console.log(response);
-    chart_mem_data(response);
+    mem_draw(response);
     document.getElementById('mem_usage_percent').innerHTML = JSON.stringify(response);
   });
 }
 
 function reload_data() {
-  socket.request('/mem/usage_percent', {
-    message: 'usage_percent'
+  socket.request('/mem/mem_usage', {
+    message: 'mem_usage'
   }, function (response) {
     //console.log(response);
+    mem_redraw(response);
     document.getElementById('mem_usage_percent').innerHTML = JSON.stringify(response);
-
-    if( chart_mem == null)
-      chart_mem_data(response);
-    else
-      rechart_mem_data(response);
   });
 }
 
 function get_swap() {
-  socket.request('/static/swap', {
-    message: 'swap'
+  socket.request('/mem/swap_stats', {
+    message: 'swap_stats'
   }, function (response) {
     //console.log(response);
     document.getElementById('sys_swap').innerHTML = JSON.stringify(response);
   });
 }
 
-setInterval(get_swap, 2500);
-setInterval(reload_data, 2500);
+get_swap();
+load_data();
+
+setInterval(get_swap, 5000);
+setInterval(reload_data, 5000);
 
 // DISKS /////////////////////////////////////////////////////////////
-
+/*
 function get_disks() {
   socket.request('/disks/index', {
     message: 'index'
@@ -465,5 +493,5 @@ function get_disks() {
 }
 
 setInterval(get_disks, 5000);
-
+*/
 </script>

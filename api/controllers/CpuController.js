@@ -65,7 +65,8 @@ var CpuController = {
   },
 
   // To trigger this action locally, visit: `http://localhost:port/cpu/usage_avg`
-  usage_avg: function (req,res) {
+  usage_avg: function (req,res)
+  {
     var tc = new Date();
     var percent = 0;
 
@@ -105,7 +106,8 @@ var CpuController = {
   },
 
   // To trigger this action locally, visit: `http://localhost:port/cpu/freqs`
-  freqs: function (req,res) {
+  freqs: function (req,res)
+  {
     var tc = new Date();
     var freqs = 0;
 
@@ -132,7 +134,8 @@ var CpuController = {
   },
 
   // To trigger this action locally, visit: `http://localhost:port/cpu/freq_avg`
-  freq_avg: function (req,res) {
+  freq_avg: function (req,res)
+  {
     var tc = new Date();
     var freqs = 0;
 

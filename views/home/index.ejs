@@ -203,44 +203,34 @@ function cpu_load_avg() {
   });
 }
 
-function cpu_usage_graph() {
+function cpu_usage_avg() {
   socket.request('/cpu/usage_avg', {
     message: 'usage_avg'
   }, function (response) {
     //console.log(JSON.stringify(response));
-    v = response[0].usage;
-    document.getElementById('cpu_usage_percent').innerHTML = v;
+    if( !isNaN(response[0].usage) ) {
+      document.getElementById('cpu_usage_percent').innerHTML = response[0].usage;
+    }
   });
-
-  return {
-    timecode: t++,
-    usage: v
-  };
-}
-
-function cpu_usage_start() {
-  return {
-    timecode: t++,
-    usage: 0
-  };
 }
 
 cpu_load_avg();
 cpu_freq_avg();
-cpu_usage_graph();
+cpu_usage_avg();
 
 setInterval(cpu_load_avg, 10000);
 setInterval(cpu_freq_avg, 1000);
+setInterval(cpu_usage_avg, 500);
 
 // CPU GRAPH /////////////////////////////////////////////////////////
 
 var t = 0; // start time (seconds since epoch)
-var v = 0; // start value (subscribers)
-var w = 16, h = 128;
-var bars = 0;
+var v = 0; // start value (cpu usage)
+var bars = 0; // number of bars per chart
+var w = 16, h = 128; // width and height of a bar
+var time_interval = 1000; // update chart every interval
 var chart_cpu_width = 0;
 
-// Initial dataset
 var chart_cpu = null;
 var data_cpu = null;
 
@@ -252,13 +242,37 @@ var y = d3.scale.linear()
     .domain([0, 100])
     .rangeRound([0, h]);
 
+function cpu_usage_graph() {
+  socket.request('/cpu/usage_avg', {
+    message: 'usage_avg'
+  }, function (response) {
+    //console.log(JSON.stringify(response));
+    if( !isNaN(response[0].usage) ) {
+      v = response[0].usage;
+    }
+  });
+
+  return {
+    timecode: t++,
+    usage: v
+  };
+}
+
+function cpu_usage_graph_start() {
+  return {
+    timecode: t++,
+    usage: 0
+  };
+}
+
 function cpu_draw() {
 
+  // Find out how many bars we can stuff inside the given SVG size
   chart_cpu_width = $("#graph_cpu_id").width();
   bars = (chart_cpu_width / w).toFixed();
 
   // Initial dataset
-  data_cpu = d3.range(bars).map(cpu_usage_start);
+  data_cpu = d3.range(bars).map(cpu_usage_graph_start);
 
   chart_cpu = d3.select(".graph_cpu").append("svg")
     .attr("class", "chart_cpu")
@@ -298,8 +312,8 @@ function cpu_draw() {
   chart_cpu.append("line")
     .attr("x1", 0)
     .attr("x2", "100%")
-    .attr("y1", h)
-    .attr("y2", h)
+    .attr("y1", h - .2)
+    .attr("y2", h - .2)
     .style("stroke", "red");
 }
 
@@ -311,7 +325,7 @@ function cpu_redraw() {
   if( newwidth != chart_cpu_width ) {
     // Restart the graph with a different number of bars
     bars = (newwidth/w).toFixed();
-    data_cpu = d3.range(bars).map(cpu_usage_start);
+    data_cpu = d3.range(bars).map(cpu_usage_graph_start);
 
     // Try to rescale the existing bars (buggy)
     //w *= (newwidth / chart_cpu_width);
@@ -320,25 +334,25 @@ function cpu_redraw() {
   }
 
   var rect = chart_cpu.selectAll("rect")
-      .data(data_cpu, function(d) { return d.timecode; });
+    .data(data_cpu, function(d) { return d.timecode; });
 
   rect.enter().insert("rect", "line")
-      .attr("x", function(d, i) { return x(i + 1) - .5; })
-      .attr("y", function(d) { return h - y(d.usage) - .5; })
-      .attr("width", w)
-      .attr("height", function(d) { return y(d.usage); })
-      .transition()
-      .duration(1000)
-      .attr("x", function(d, i) { return x(i) - .5; });
+    .attr("x", function(d, i) { return x(i + 1) - .5; })
+    .attr("y", function(d) { return h - y(d.usage) - .5; })
+    .attr("width", w)
+    .attr("height", function(d) { return y(d.usage); })
+    .transition()
+    .duration(time_interval)
+    .attr("x", function(d, i) { return x(i) - .5; });
 
   rect.transition()
-      .duration(1000)
-      .attr("x", function(d, i) { return x(i) - .5; });
+    .duration(time_interval)
+    .attr("x", function(d, i) { return x(i) - .5; });
 
   rect.exit().transition()
-      .duration(1000)
-      .attr("x", function(d, i) { return x(i - 1) - .5; })
-      .remove();
+    .duration(time_interval)
+    .attr("x", function(d, i) { return x(i - 1) - .5; })
+    .remove();
 }
 
 cpu_draw();
@@ -347,7 +361,7 @@ setInterval(function() {
   data_cpu.shift();
   data_cpu.push(cpu_usage_graph());
   cpu_redraw();
-}, 1050);
+}, time_interval + 100); // The extra 100ms helps keep the timescale linear
 
 // MEM ///////////////////////////////////////////////////////////////
 

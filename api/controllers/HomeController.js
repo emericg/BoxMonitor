@@ -4,7 +4,6 @@
 ---------------------*/
 
 var os = require('os');
-var fs = require('fs');
 
 var sys_os_t = os.type() + ' (' + os.arch() + ') ' + os.release();
 var sys_cpu_t = ' [' + os.arch() + '] [' + os.endianness() + '] [' + os.cpus().length + ' cores]';

@@ -28,9 +28,10 @@ REALTIME
 - detailed chart
 - basic connection tracking ?
 
-# devices list (lspci, lsusb, ...)
-# basic per process tracing ? that would be cool
-# LXC / cgroup tracing ? that would be cool too
+#MISC
+- devices list (cpuinfo, lspci, lsusb, ...)
+- basic per process tracing ? that would be cool
+- LXC / cgroup tracing ? that would be cool too
 
 LOGS
 ----

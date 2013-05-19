@@ -15,7 +15,7 @@ Features
 Requirement
 -----------
 
-- Node.js
+- Node.js (version 0.10 ?)
 
 Installation
 ------------
@@ -24,14 +24,14 @@ Installation
 > $ npm install  
 > $ node apps  
 
-Then browse http://localhost:1337/
-
-Screenshot
-----------
-
-![BoxMonitor 'infos' tab](https://github.com/emericg/BoxMonitor/raw/master/public/images/BoxMonitor.png
+Then just browse <http://localhost:1337/>
 
 Licence
 -------
 
 GPL v3 <http://www.gnu.org/licenses/gpl-3.0.txt>
+
+Screenshot
+----------
+
+![BoxMonitor 'infos' tab](https://github.com/emericg/BoxMonitor/raw/master/public/images/BoxMonitor.png)

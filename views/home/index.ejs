@@ -208,13 +208,12 @@ function cpu_usage_graph() {
     message: 'usage_avg'
   }, function (response) {
     //console.log(JSON.stringify(response));
-    t = bars + response[0].timecode;
     v = response[0].usage;
     document.getElementById('cpu_usage_percent').innerHTML = v;
   });
 
   return {
-    timecode: t,
+    timecode: t++,
     usage: v
   };
 }
@@ -245,20 +244,21 @@ var chart_cpu_width = 0;
 var chart_cpu = null;
 var data_cpu = null;
 
+var x = d3.scale.linear()
+    .domain([0, 1])
+    .range([0, w]);
+
+var y = d3.scale.linear()
+    .domain([0, 100])
+    .rangeRound([0, h]);
+
 function cpu_draw() {
 
   chart_cpu_width = $("#graph_cpu_id").width();
   bars = (chart_cpu_width / w).toFixed();
 
+  // Initial dataset
   data_cpu = d3.range(bars).map(cpu_usage_start);
-
-  var x = d3.scale.linear()
-      .domain([0, 1])
-      .range([0, w]);
-
-  var y = d3.scale.linear()
-      .domain([0, 100])
-      .rangeRound([0, h]);
 
   chart_cpu = d3.select(".graph_cpu").append("svg")
     .attr("class", "chart_cpu")
@@ -288,19 +288,19 @@ function cpu_draw() {
     .style("stroke", "#ccc");
 
   chart_cpu.selectAll("rect")
-      .data(data_cpu)
-      .enter().append("rect")
-      .attr("x", function(d, i) { return x(i) - .5; })
-      .attr("y", function(d) { return h - y(d.usage) - .5; })
-      .attr("width", h)
-      .attr("height", function(d) { return y(d.usage); });
+    .data(data_cpu)
+    .enter().append("rect")
+    .attr("x", function(d, i) { return x(i) - .5; })
+    .attr("y", function(d) { return h - y(d.usage) - .5; })
+    .attr("width", h)
+    .attr("height", function(d) { return y(d.usage); });
 
   chart_cpu.append("line")
-      .attr("x1", 0)
-      .attr("x2", "100%")
-      .attr("y1", h)
-      .attr("y2", h)
-      .style("stroke", "red");
+    .attr("x1", 0)
+    .attr("x2", "100%")
+    .attr("y1", h)
+    .attr("y2", h)
+    .style("stroke", "red");
 }
 
 function cpu_redraw() {
@@ -319,14 +319,6 @@ function cpu_redraw() {
     chart_cpu_width = newwidth;
   }
 
-  var x = d3.scale.linear()
-      .domain([0, 1])
-      .range([0, w]);
-
-  var y = d3.scale.linear()
-      .domain([0, 100])
-      .rangeRound([0, h]);
-
   var rect = chart_cpu.selectAll("rect")
       .data(data_cpu, function(d) { return d.timecode; });
 
@@ -343,7 +335,9 @@ function cpu_redraw() {
       .duration(1000)
       .attr("x", function(d, i) { return x(i) - .5; });
 
-  rect.exit()
+  rect.exit().transition()
+      .duration(1000)
+      .attr("x", function(d, i) { return x(i - 1) - .5; })
       .remove();
 }
 
@@ -353,7 +347,7 @@ setInterval(function() {
   data_cpu.shift();
   data_cpu.push(cpu_usage_graph());
   cpu_redraw();
-}, 1000);
+}, 1050);
 
 // MEM ///////////////////////////////////////////////////////////////
 

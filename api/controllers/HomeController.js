@@ -5,6 +5,8 @@
 
 var os = require('os');
 
+///////////////////////////////////////////////////////////////////////////////
+
 var sys_os_t = os.type() + ' (' + os.arch() + ') ' + os.release();
 var sys_cpu_t = ' [' + os.arch() + '] [' + os.endianness() + '] [' + os.cpus().length + ' cores]';
 var sys_cpus = os.cpus();
@@ -22,6 +24,24 @@ var sys_hostname = os.hostname();
 var sys_uptime = os.uptime();
 var sys_net = os.networkInterfaces();
 var sys_tmpdir = os.tmpdir();
+
+///////////////////////////////////////////////////////////////////////////////
+
+var wc = require('child_process').spawn('wc', ['-l', '/proc/swaps']);
+var swap_string = new String('off');
+
+wc.stdout.on('data', function (data) {
+  var swap_nb = String(data).split(" ")[0] - 1;
+  
+  if( swap_nb > 0 )
+    swap_string = 'on';
+  else
+    swap_string = 'off';
+
+  console.log('wc stdout: ' + swap_nb + ' swap partition(s) found.');
+});
+
+///////////////////////////////////////////////////////////////////////////////
 
 var HomeController = {
 

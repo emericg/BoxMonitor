@@ -217,16 +217,6 @@ section {
     min-height: 256px;
     overflow: hidden;
   }
-
-  .two_panes {
-    display: block;
-    margin-bottom: 1%;
-  }
-
-  .three_panes {
-    display: block;
-    margin-bottom: 1%;
-  }
 }
 
 @media (min-width: 721px) {
@@ -245,16 +235,16 @@ section {
     display: inline-block;
     min-width: 2%;
   }
+}
 
-  .two_panes {
-    display: inline-block;
-    min-width: 40%;
-  }
+.two_panes {
+  display: inline-block;
+  min-width: 49%;
+}
 
-  .three_panes {
-    display: inline-block;
-    min-width: 33%;
-  }
+.three_panes {
+  display: inline-block;
+  min-width: 33%;
 }
 
 /* ******************************************************************** */

@@ -93,20 +93,38 @@
             <div class="infos"><p class="red"><span id="mem_usage_percent">0</span>%</p></div>
           </div>
           <div class="box_body">
-            <table>
-              <tr>
-                <td>Total:</td>
-                <td><b class="red"><%- sys_mem_mib %></b> (<b class="red"><%- sys_mem_mb %></b>)</td>
-              </tr>
-              <tr>
-                <td>Used:</td>
-                <td><b class="red"><%- sys_mem_used %></b> / Free: <b class="red"><%- sys_mem_free %></b></td>
-              </tr>
-              <tr>
-                <td>Swap:</td>
-                <td><b class="red"><%- sys_swap_mib %></b></td>
-              </tr>
-            </table>
+            <div class="two_panes">
+              <table>
+                <tr>
+                  <td>RAM:</td>
+                  <td><b class="red"><%- sys_mem_mib %></b></td>
+                </tr>
+                <tr>
+                  <td>Used:</td>
+                  <td><b class="red"><span id="ram_used">loading...<span></b></td>
+                </tr>
+                <tr>
+                  <td>Free:</td>
+                  <td><b class="red"><span id="ram_free">loading...<span></b></td>
+                </tr>
+              </table>
+            </div>
+            <div class="two_panes">
+              <table>
+                <tr>
+                  <td>Swap:</td>
+                  <td><b class="red"><%- sys_swap_mib %></b></td>
+                </tr>
+                <tr>
+                  <td>Used:</td>
+                  <td><b class="red"><span id="swap_used">loading...<span></b></td>
+                </tr>
+                <tr>
+                  <td>Free:</td>
+                  <td><b class="red"><span id="swap_free">loading...<span></b></td>
+                </tr>
+              </table>
+            </div>
             <div class="graph_mem"></div>
           </div>
         </div>
@@ -351,11 +369,62 @@ setInterval(function() {
 
 // MEM ///////////////////////////////////////////////////////////////
 
+var rampercent = 0.0;
+
+function mem_stats() {
+  socket.request('/mem/mem_stats', {
+    message: 'mem_stats'
+  }, function (response) {
+  //console.log(JSON.stringify(response));
+
+  var ramused = (response[1].MemTotal - response[1].MemFree - response[1].Buffers - response[1].Cached);
+  var ramfree = (response[1].MemTotal - ramused);
+  rampercent = ((ramused / response[1].MemTotal) * 100).toFixed(1);
+
+  document.getElementById('mem_usage_percent').innerHTML = rampercent;
+  document.getElementById('ram_used').innerHTML = (ramused / 1024).toFixed() + " Mib";
+  document.getElementById('ram_free').innerHTML = (ramfree / 1024).toFixed() + " Mib";
+
+  if( chart_mem == null)
+    mem_draw();
+  });
+}
+
+function swap_stats() {
+  socket.request('/mem/swap_stats', {
+    message: 'swap_stats'
+  }, function (response) {
+  //console.log(JSON.stringify(response));
+
+  var swapused = response[1].SwapTotal;
+  var swapfree = response[1].SwapFree;
+
+  document.getElementById('swap_used').innerHTML = (swapused / 1024).toFixed() + " Mib";
+  document.getElementById('swap_free').innerHTML = (swapfree / 1024).toFixed() + " Mib";
+  });
+}
+
+mem_stats();
+swap_stats();
+
+setInterval(mem_stats, 2500);
+setInterval(swap_stats, 10000);
+
+// MEM CHART /////////////////////////////////////////////////////////
+
 var chart_mem = null;
 var data_mem = new Array();
 
-function mem_draw(param) {
-  data_mem[0] = param;
+function mem_draw() {
+  data_mem[0] = rampercent;
+
+  var x = d3.scale.linear()
+    .domain([0, 100])
+    .range([0, "93%"]);
+
+  var y = d3.scale.ordinal()
+    .domain(data_mem)
+    .rangeBands([8, 64]);
 
   chart_mem = d3.select(".graph_mem").append("svg")
     .attr("class", "chart_mem")
@@ -363,13 +432,6 @@ function mem_draw(param) {
     .attr("height", 72)
     .append("g")
     .attr("transform", "translate(8,24)");
-
-  var x = d3.scale.linear()
-    .domain([0, 100])
-    .range([0, "92%"]);
-  var y = d3.scale.ordinal()
-    .domain(data_mem)
-    .rangeBands([8, 64]);
 
   chart_mem.selectAll("line")
     .data(x.ticks(4))
@@ -379,6 +441,7 @@ function mem_draw(param) {
     .attr("y1", 0)
     .attr("y2", 72)
     .style("stroke", "#ccc");
+
   chart_mem.selectAll(".rule")
     .data(x.ticks(4))
     .enter().append("text")
@@ -421,12 +484,13 @@ function mem_draw(param) {
     .style("stroke", "#000");
 }
 
-function mem_redraw(param) {
-  data_mem[0] = param;
+function mem_redraw() {
+  data_mem[0] = rampercent;
 
   var x = d3.scale.linear()
     .domain([0, 100])
     .range([0, "93%"]);
+
   var y = d3.scale.ordinal()
     .domain(data_mem)
     .rangeBands([8, 64]);
@@ -439,40 +503,7 @@ function mem_redraw(param) {
     .attr("height", y.rangeBand());
 }
 
-function load_data() {
-  socket.request('/mem/mem_usage', {
-    message: 'mem_usage'
-  }, function (response) {
-    //console.log(response);
-    mem_draw(response);
-    document.getElementById('mem_usage_percent').innerHTML = JSON.stringify(response);
-  });
-}
-
-function reload_data() {
-  socket.request('/mem/mem_usage', {
-    message: 'mem_usage'
-  }, function (response) {
-    //console.log(response);
-    mem_redraw(response);
-    document.getElementById('mem_usage_percent').innerHTML = JSON.stringify(response);
-  });
-}
-
-function get_swap() {
-  socket.request('/mem/swap_stats', {
-    message: 'swap_stats'
-  }, function (response) {
-    //console.log(response);
-    document.getElementById('sys_swap').innerHTML = JSON.stringify(response);
-  });
-}
-
-//get_swap();
-load_data();
-
-//setInterval(get_swap, 5000);
-setInterval(reload_data, 5000);
+setInterval(mem_redraw, 2500);
 
 // DISKS /////////////////////////////////////////////////////////////
 /*

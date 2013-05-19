@@ -3,6 +3,7 @@
 body {
   background-color: #F5F5F5;
   width: 100%;
+  min-width: 320px;
   margin: 0px;
   padding: 0px;
 }
@@ -194,7 +195,7 @@ body {
 }
 
 section {
-  min-height: 192px;
+  min-height: 256px;
   margin-bottom: 3%;
 }
 
@@ -204,7 +205,7 @@ section {
 .box_wide {
   background-color: white;
   width: 100%;
-  min-height: 192px;
+  min-height: 256px;
   overflow: hidden;
 }
 
@@ -213,7 +214,7 @@ section {
   .box_square {
     background-color: white;
     width: 100%;
-    min-height: 192px;
+    min-height: 256px;
     overflow: hidden;
   }
 
@@ -235,7 +236,7 @@ section {
     background-color: white;
     display: inline-block;
     width: 49%;
-    height: 192px;
+    height: 256px;
     overflow: hidden;
   }
 
@@ -247,7 +248,7 @@ section {
 
   .two_panes {
     display: inline-block;
-    min-width: 45%;
+    min-width: 40%;
   }
 
   .three_panes {
@@ -346,20 +347,30 @@ section {
 
 /* ******************************************************************** */
 
+.box_body {
+  background-color: white;
+  padding: 2%;
+  color: #858585;
+}
+
 @media (max-width: 720px) {
 
   .box_body {
-    background-color: white;
-    padding: 2%;
     font-size: 0.8em;
   }
 }
 
-@media (min-width: 721px) {
+@media (max-width: 999px) {
 
   .box_body {
-    background-color: white;
-    padding: 2%;
+    font-size: 1.0em;
+  }
+}
+
+@media (min-width: 1000px) {
+
+  .box_body {
+    font-size: 1.2em;
   }
 }
 
@@ -413,6 +424,14 @@ footer {
 /* ******************************************************************** */
 /* Colors ************************************************************* */
 
+.dark {
+  color: #252525;
+}
+
+.grey {
+  color: #858585;
+}
+
 .orange {
   color: #FFD435;
 }
@@ -431,10 +450,6 @@ footer {
 
 .blue {
   color: #6EC9E7;
-}
-
-.dark {
-  color: #252525;
 }
 
 /* ******************************************************************** */

@@ -1,6 +1,6 @@
 {
   "name": "BoxMonitor",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Simple linux box monitoring.",
   "author": "Emeric Grange <emeric.grange@gmail.com>",
   "repository": {

@@ -30,32 +30,32 @@
             <div class="two_panes">
               <table>
                 <tr>
-                  <td><b>System:</b></td>
-                  <td><%- sys_os_t %></td>
+                  <td>System:</td>
+                  <td><b class="orange"><%- sys_os_t %></b></td>
                 </tr>
                 <tr>
-                  <td><b>Uptime:</b></td>
-                  <td><span id="sys_uptime">loading...</span></td>
+                  <td>Uptime:</td>
+                  <td><b class="orange"><span id="sys_uptime">loading...</span></b></td>
                 </tr>
                 <tr>
-                  <td><b>Hostname:</b></td>
-                  <td><%- sys_hostname %></td>
+                  <td>Hostname:</td>
+                  <td><b class="orange"><%- sys_hostname %></b></td>
                 </tr>
               </table>
             </div>
             <div class="two_panes">
               <table>
                 <tr>
-                  <td><b>CPU:</b></td>
-                  <td><%- sys_cpu %></td>
+                  <td>CPU:</td>
+                  <td><b class="orange"><%- sys_cpu %></b></td>
                 </tr>
                 <tr>
-                  <td><b>RAM:</b></td>
-                  <td><%- sys_mem_mib %></td>
+                  <td>RAM:</td>
+                  <td><b class="orange"><%- sys_mem_mib %></b></td>
                 </tr>
                 <tr>
-                  <td><b>Swap:</b></td>
-                  <td><%- sys_swap_mib %></td>
+                  <td>Swap:</td>
+                  <td><b class="orange"><%- sys_swap_mib %></b></td>
                 </tr>
               </table>
             </div>
@@ -74,9 +74,9 @@
             <div class="infos"><p class="green"><span id="cpu_usage_percent">0</span>%</p></div>
           </div>
           <div class="box_body">
-            CPU model: <b><%- sys_cpu %></b> <%- sys_cpu_t %> <br />
-            CPU loads: <b><span id="load_one">loading</span></b> (1 mins) <b><span id="load_five">loading</span></b> (5 mins) <b><span id="load_fifteen">loading</span></b> (15 min)<br />
-            CPU is currently running at <b><span id="freq_avg">loading</span></b> Mhz (average)<br />
+            CPU model: <b class="green"><%- sys_cpu %></b> <%- sys_cpu_t %> <br />
+            CPU loads: <b class="green"><span id="load_one">loading</span></b> (1 mins) <b class="green"><span id="load_five">loading</span></b> (5 mins) <b class="green"><span id="load_fifteen">loading</span></b> (15 min)<br />
+            CPU is currently running at <b class="green"><span id="freq_avg">loading</span></b> Mhz (average)<br />
             <div id="graph_cpu_id"><div class="box_zone"><div class="graph_cpu" height="128px"></div></div></div>
           </div>
         </div>
@@ -95,16 +95,16 @@
           <div class="box_body">
             <table>
               <tr>
-                <td><b>Total:</b></td>
-                <td><%- sys_mem_mib %> (<%- sys_mem_mb %>)</td>
+                <td>Total:</td>
+                <td><b class="red"><%- sys_mem_mib %></b> (<b class="red"><%- sys_mem_mb %></b>)</td>
               </tr>
               <tr>
-                <td><b>Used:</b></td>
-                <td><%- sys_mem_used %> / <b>Free:</b> <%- sys_mem_free %></td>
+                <td>Used:</td>
+                <td><b class="red"><%- sys_mem_used %></b> / Free: <b class="red"><%- sys_mem_free %></b></td>
               </tr>
               <tr>
-                <td><b>Swap:</b></td>
-                <td><span id="sys_swap">searching...</span></td>
+                <td>Swap:</td>
+                <td><b class="red"><%- sys_swap_mib %></b></td>
               </tr>
             </table>
             <div class="graph_mem"></div>
@@ -120,8 +120,8 @@
             </div>
           </div>
           <div class="box_body">
-            <b>Hostname:</b> <%- sys_hostname %><br />
-            <b>Interfaces:</b><br />
+            Hostname: <b class="blue"><%- sys_hostname %></b><br />
+            <br />
             <% _.each(sys_net, function (sys_net) { %>
             <li><%= JSON.stringify(sys_net) %></li><% }) %><br />
           </div>
@@ -129,30 +129,16 @@
       </section>
 
       <section>
-        <div class="box_square">
+        <div class="box_wide">
           <div class="box_header">
-            <img class="logo" src="images/round/gear.png" >
-            <div class="title">
-              <h1 class="orange">CPUs</h1>
-              <h2 class="orange">Detailed processors list</h2>
-            </div>
-          </div>
-          <div class="box_body">
-            <% _.each(sys_cpus, function (sys_cpus) { %>
-            <li><%= sys_cpus.model %></li><% }) %>
-          </div>
-        </div>
-        <div class="box_spacer"><br /></div>
-        <div class="box_square">
-          <div class="box_header">
-            <img class="logo" src="images/round/gear.png" >
+            <img class="logo" src="images/round/circle.png" >
             <div class="title">
               <h1 class="pink">Disks</h1>
               <h2 class="pink">Detailed disks usage</h2>
             </div>
           </div>
           <div class="box_body">
-            Temporary directory: <b><%- sys_tmpdir %></b><br />
+            Temporary directory: <b class="pink"><%- sys_tmpdir %></b><br />
             Disks usage: <span id="disks_overview">loading...</span>
           </div>
         </div>
@@ -482,10 +468,10 @@ function get_swap() {
   });
 }
 
-get_swap();
+//get_swap();
 load_data();
 
-setInterval(get_swap, 5000);
+//setInterval(get_swap, 5000);
 setInterval(reload_data, 5000);
 
 // DISKS /////////////////////////////////////////////////////////////

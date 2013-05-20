@@ -16,30 +16,36 @@ var MemController = {
 
   mem_stats: function (req,res)
   {
+    var limit = 0;
     var timestamp_ms = Math.round(Date.now() / 1000);
 
     var meminfo_data = fs.readFileSync("/proc/meminfo", "utf8");
-    var meminfo_json = [{"id": "/proc/meminfo","timestamp": timestamp_ms}];
+    var meminfo_json = [{"id": "/proc/meminfo", "timestamp": timestamp_ms}];
     var meminfo_json_content = new Object();
 
     var meminfo = meminfo_data.split('\n');
-    meminfo.forEach(function (item) {
-      item = item.replace(/\s+/, ' ');
-      item = item.replace(/\skB/, '');
-      item = item.replace(/\:/, '');
+    for( var i in meminfo ) {
+      meminfo[i] = meminfo[i].replace(/\s+/, ' ');
+      meminfo[i] = meminfo[i].replace(/\skB/, '');
+      meminfo[i] = meminfo[i].replace(/\:/, '');
 
-      if (item !== '') {
-        item = item.split(' ');
+      if( meminfo[i] !== '' ) {
+        meminfo[i] = meminfo[i].split(' ');
 
-        if( String(item[0]) == "MemTotal" ||
-            String(item[0]) == "MemFree" ||
-            String(item[0]) == "Buffers" ||
-            String(item[0]) == "Cached" ) {
-          meminfo_json_content[String(item[0])] = parseInt(item[1]);
-          //console.log( String(item[0]) + ": " + parseInt(item[1]) );
+        if( String(meminfo[i][0]) == "MemTotal" ||
+            String(meminfo[i][0]) == "MemFree" ||
+            String(meminfo[i][0]) == "Buffers" ||
+            String(meminfo[i][0]) == "Cached" ) {
+          meminfo_json_content[String(meminfo[i][0])] = parseInt(meminfo[i][1]);
+          //console.log( String(meminfo[i][0]) + ": " + parseInt(meminfo[i][1]) );
+
+          // Bail once we have what we need
+          limit++;
+          if( limit > 3 )
+            break;
         }
       }
-    });
+    }
 
     meminfo_json.push(meminfo_json_content);
 
@@ -53,7 +59,7 @@ var MemController = {
     var timestamp_ms = Math.round(Date.now() / 1000);
 
     var meminfo_data = fs.readFileSync("/proc/meminfo", "utf8");
-    var meminfo_json = [{"id": "/proc/meminfo","timestamp": timestamp_ms}];
+    var meminfo_json = [{"id": "/proc/meminfo", "timestamp": timestamp_ms}];
     var meminfo_json_content = new Object();
 
     var meminfo = meminfo_data.split('\n');
@@ -62,7 +68,7 @@ var MemController = {
       item = item.replace(/\skB/, '');
       item = item.replace(/\:/, '');
 
-      if (item !== '') {
+      if( item !== '' ) {
         item = item.split(' ');
         meminfo_json_content[String(item[0])] = parseInt(item[1]);
         //console.log( String(item[0]) + ": " + parseInt(item[1]) );
@@ -76,40 +82,38 @@ var MemController = {
     res.json(meminfo_json);
   },
 
-  // To trigger this action locally, visit: `http://localhost:port/mem/mem_usage`
-  mem_usage: function (req,res)
-  {
-    var percent = ((os.totalmem() - os.freemem()) / (os.totalmem())) * 100.0;
-
-    // Send a JSON response
-    res.send(percent.toFixed(1));
-  },
-
   swap_stats: function (req,res)
   {
+    var limit = 0;
     var timestamp_ms = Math.round(Date.now() / 1000);
 
     var meminfo_data = fs.readFileSync("/proc/meminfo", "utf8");
-    var meminfo_json = [{"id": "/proc/meminfo","timestamp": timestamp_ms}];
+    var meminfo_json = [{"id": "/proc/meminfo", "timestamp": timestamp_ms}];
     var meminfo_json_content = new Object();
 
     var meminfo = meminfo_data.split('\n');
-    meminfo.forEach(function (item) {
-      item = item.replace(/\s+/, ' ');
-      item = item.replace(/\skB/, '');
-      item = item.replace(/\:/, '');
 
-      if (item !== '') {
-        item = item.split(' ');
+    for( var i in meminfo ) {
+      meminfo[i] = meminfo[i].replace(/\s+/, ' ');
+      meminfo[i] = meminfo[i].replace(/\skB/, '');
+      meminfo[i] = meminfo[i].replace(/\:/, '');
 
-        if( String(item[0]) == "SwapCached" ||
-            String(item[0]) == "SwapTotal" ||
-            String(item[0]) == "SwapFree" ) {
-          meminfo_json_content[String(item[0])] = parseInt(item[1]);
-          //console.log( String(item[0]) + ": " + parseInt(item[1]) );
+      if( meminfo[i] !== '' ) {
+        meminfo[i] = meminfo[i].split(' ');
+
+        if( String(meminfo[i][0]) == "SwapCached" ||
+            String(meminfo[i][0]) == "SwapTotal" ||
+            String(meminfo[i][0]) == "SwapFree" ) {
+          meminfo_json_content[String(meminfo[i][0])] = parseInt(meminfo[i][1]);
+          //console.log( String(meminfo[i][0]) + ": " + parseInt(meminfo[i][1]) );
+
+          // Bail once we have what we need
+          limit++;
+          if( limit > 2 )
+            break;
         }
       }
-    });
+    }
 
     meminfo_json.push(meminfo_json_content);
 
@@ -122,37 +126,34 @@ var MemController = {
   {
     var timestamp_ms = Math.round(Date.now() / 1000);
 
-    var wc = require('child_process').spawn('wc', ['-l', '/proc/swaps']);
-    var swap_string = new String('off');
+    var swaps_json = [{"id": "/proc/swaps", "timestamp": timestamp_ms}];
+    var swaps_json_content = new Object();
 
-    wc.stdout.on('data', function (data) {
-      var swap_nb = String(data).split(" ")[0] - 1;
-      
-      if( swap_nb > 0 )
-        swap_string = 'on';
-      else
-        swap_string = 'off';
+    var swaps_data = fs.readFileSync("/proc/swaps", "utf8");
+    var swaps_lines = swaps_data.split('\n');
 
-      console.log('wc stdout: ' + swap_nb + ' swap partition(s) found.');
-    });
+    // The first line only contains legend
+    swaps_lines.splice(0,1);
 
-    var swap_data = fs.readFileSync("/proc/swaps", "utf8");
+    for( var i in swaps_lines ) {
+      // First, clear whitespaces
+      swaps_lines[i] = swaps_lines[i].replace(/ +(?= )/g, '');
 
-    // Create a json containing the infos
-    var jsonObj = [{"swap": swap_string}];
+      if( swaps_lines[i] !== '' ) {
+        swaps_lines[i] = swaps_lines[i].split(' ');
 
-    // note: do not forget multiple swap files
-    if( swap_nb > 0 ) {
-      jsonObj.push([{
-        "total": 0,
-        "used": 0,
-        "free": 0,
-        "path": "/swap",
-      }]);
+        swaps_json.push([{
+          "Filename": swaps_lines[i][0],
+          "Type": swaps_lines[i][1],
+          "Size": parseInt(swaps_lines[i][2]),
+          "Used": parseInt(swaps_lines[i][3]),
+          "Priority": parseInt(swaps_lines[i][4]),
+        }]);
+      }
     }
 
     // Send a JSON response
-    res.json(jsonObj);
+    res.json(swaps_json);
   },
 
 };

@@ -139,7 +139,7 @@
           </div>
           <div class="box_body">
             Hostname: <b class="blue"><%- sys_hostname %></b><br />
-            <br />
+            Interfaces:<br />
             <% _.each(sys_net, function (sys_net) { %>
             <li><%= JSON.stringify(sys_net) %></li><% }) %><br />
           </div>
@@ -218,9 +218,18 @@ function cpu_usage_avg() {
   });
 }
 
+function cpu_processes_running() {
+  socket.request('/cpu/processes_running', {
+    message: 'processes_running'
+  }, function (response) {
+    console.log(JSON.stringify(response));
+  });
+}
+
 cpu_load_avg();
 cpu_freq_avg();
 cpu_usage_avg();
+//cpu_processes_running();
 
 setInterval(cpu_load_avg, 10000);
 setInterval(cpu_freq_avg, 1000);
@@ -404,8 +413,17 @@ function swap_stats() {
   });
 }
 
+function swap_stats_full() {
+  socket.request('/mem/swap_stats_full', {
+    message: 'swap_stats_full'
+  }, function (response) {
+    console.log(JSON.stringify(response));
+  });
+}
+
 mem_stats();
 swap_stats();
+//swap_stats_full();
 
 setInterval(mem_stats, 2500);
 setInterval(swap_stats, 10000);
@@ -506,17 +524,16 @@ function mem_redraw() {
 setInterval(mem_redraw, 2500);
 
 // DISKS /////////////////////////////////////////////////////////////
-/*
+
 function get_disks() {
-  socket.request('/disks/index', {
-    message: 'index'
+  socket.request('/disks/stats', {
+    message: 'stats'
   }, function (response) {
-    var df = new String(response);
-    console.log(df);
-    //document.getElementById('disks_overview').innerHTML = response;
+    document.getElementById('disks_overview').innerHTML = JSON.stringify(response);
   });
 }
 
-setInterval(get_disks, 5000);
-*/
+get_disks();
+//setInterval(get_disks, 10000);
+
 </script>

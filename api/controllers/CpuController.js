@@ -4,6 +4,9 @@
 ---------------------*/
 
 var os = require('os');
+var fs = require('fs');
+
+///////////////////////////////////////////////////////////////////////////////
 
 var prev_total = new Array();
 var prev_total_use = new Array();
@@ -12,6 +15,8 @@ for(var i = 0, len = os.cpus().length; i < len; i++) {
   prev_total[i] = 0;
   prev_total_use[i] = 0;
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 var CpuController = {
 
@@ -41,14 +46,14 @@ var CpuController = {
   // To trigger this action locally, visit: `http://localhost:port/cpu/usage`
   usage: function (req,res)
   {
-    var tc = new Date();
+    var timestamp_ms = Math.round(Date.now() / 1000);
 
     // Get the value of a parameter
     //var param = req.param('message');
 
     // Create a json containing the infos
     var jsonObj = [{
-      "timecode": tc.getUTCSeconds(),
+      "timestamp": timestamp_ms,
       "cores": os.cpus().length,
     }]
 
@@ -67,7 +72,7 @@ var CpuController = {
   // To trigger this action locally, visit: `http://localhost:port/cpu/usage_avg`
   usage_avg: function (req,res)
   {
-    var tc = new Date();
+    var timestamp_ms = Math.round(Date.now() / 1000);
     var percent = 0;
 
     // Get the value of a parameter
@@ -97,7 +102,7 @@ var CpuController = {
 
     // Create a json containing the infos
     var jsonObj = [{
-      "timecode": tc.getUTCSeconds(),
+      "timestamp": timestamp_ms,
       "usage": percent.toFixed(2)
     }]
 
@@ -108,7 +113,7 @@ var CpuController = {
   // To trigger this action locally, visit: `http://localhost:port/cpu/freqs`
   freqs: function (req,res)
   {
-    var tc = new Date();
+    var timestamp_ms = Math.round(Date.now() / 1000);
     var freqs = 0;
 
     // Get the value of a parameter
@@ -116,7 +121,7 @@ var CpuController = {
 
     // Create a json containing the infos
     var jsonObj = [{
-      "timecode": tc.getUTCSeconds(),
+      "timestamp": timestamp_ms,
       "cores": os.cpus().length,
     }]
 
@@ -136,7 +141,7 @@ var CpuController = {
   // To trigger this action locally, visit: `http://localhost:port/cpu/freq_avg`
   freq_avg: function (req,res)
   {
-    var tc = new Date();
+    var timestamp_ms = Math.round(Date.now() / 1000);
     var freqs = 0;
 
     // Get the value of a parameter
@@ -148,12 +153,40 @@ var CpuController = {
 
     // Create a json containing the infos
     var jsonObj = [{
-      "timecode": tc.getUTCSeconds(),
+      "timestamp": timestamp_ms,
       "freq_avg": (freqs / os.cpus().length).toFixed()
     }]
 
     // Send a JSON response
     res.json(jsonObj);
+  },
+
+  // To trigger this action locally, visit: `http://localhost:port/cpu/processes_running`
+  processes_running: function (req,res)
+  {
+    var timestamp_ms = Math.round(Date.now() / 1000);
+
+    var loadavg_data = fs.readFileSync("/proc/loadavg", "utf8");
+    loadavg_data = loadavg_data.split(' ');
+
+    var running = loadavg_data[3].split('/')[0];
+    var total = loadavg_data[3].split('/')[1];
+
+    var jsonObj = [{
+      "timestamp": timestamp_ms,
+      "running": parseInt(running),
+      "total": parseInt(total)
+    }]
+
+    // Send a JSON response
+    console.log( JSON.stringify(jsonObj) );
+    res.json(jsonObj);
+  },
+
+  // To trigger this action locally, visit: `http://localhost:port/cpu/stats`
+  stat: function (req,res)
+  {
+    // parse full /proc/stat !
   },
 
 };

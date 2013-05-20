@@ -32,13 +32,12 @@ var swap_string = new String('off');
 
 wc.stdout.on('data', function (data) {
   var swap_nb = String(data).split(" ")[0] - 1;
-  
+  //console.log('wc stdout: ' + swap_nb + ' swap partition(s) found.');
+
   if( swap_nb > 0 )
     swap_string = 'on';
   else
     swap_string = 'off';
-
-  console.log('wc stdout: ' + swap_nb + ' swap partition(s) found.');
 });
 
 ///////////////////////////////////////////////////////////////////////////////

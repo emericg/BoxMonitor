@@ -4,6 +4,7 @@
 ---------------------*/
 
 var os = require('os');
+var fs = require('fs');
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -11,33 +12,45 @@ var sys_os_t = os.type() + ' (' + os.arch() + ') ' + os.release();
 var sys_cpu_t = ' [' + os.arch() + '] [' + os.endianness() + '] [' + os.cpus().length + ' cores]';
 var sys_cpus = os.cpus();
 var sys_cpu = os.cpus()[0].model;
-var sys_load_avg = (os.loadavg()[0]).toFixed(3) + ', ' + (os.loadavg()[1]).toFixed(3) + ', ' + (os.loadavg()[2]).toFixed(3);
 
 var sys_mem_mb = (os.totalmem() / 1000000).toFixed() + ' Mb';
 var sys_mem_mib = (os.totalmem() / 1048576).toFixed() + ' Mib';
-var sys_mem_used = ((os.totalmem() - os.freemem()) / 1048576).toFixed() + ' Mib';
-var sys_mem_free = (os.freemem() / 1048576).toFixed() + ' Mib';
 
 var sys_swap_mib = new String('off');
 
 var sys_hostname = os.hostname();
-var sys_uptime = os.uptime();
-var sys_net = os.networkInterfaces();
 var sys_tmpdir = os.tmpdir();
 
 ///////////////////////////////////////////////////////////////////////////////
 
 var wc = require('child_process').spawn('wc', ['-l', '/proc/swaps']);
-var swap_string = new String('off');
 
 wc.stdout.on('data', function (data) {
   var swap_nb = String(data).split(" ")[0] - 1;
   //console.log('wc stdout: ' + swap_nb + ' swap partition(s) found.');
 
   if( swap_nb > 0 )
-    swap_string = 'on';
-  else
-    swap_string = 'off';
+  {
+    var meminfo_data = fs.readFileSync("/proc/meminfo", "utf8");
+    var meminfo = meminfo_data.split('\n');
+
+    for( var i in meminfo ) {
+      meminfo[i] = meminfo[i].replace(/\s+/, ' ');
+      meminfo[i] = meminfo[i].replace(/\skB/, '');
+      meminfo[i] = meminfo[i].replace(/\:/, '');
+
+      if( meminfo[i] !== '' ) {
+        meminfo[i] = meminfo[i].split(' ');
+
+        if( String(meminfo[i][0]) == "SwapTotal" ) {
+          // Results are retrieved in kB from /proc/meminfo, and converted into MiB
+          sys_swap_mib = (parseInt(meminfo[i][1]) * 1000 / 1024 / 1024).toFixed();
+          //console.log( String(sys_swap_mib) );
+          break;
+        }
+      }
+    }
+  }
 });
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -52,19 +65,13 @@ var HomeController = {
       sys_cpu: sys_cpu,
       sys_cpus: sys_cpus,
       sys_hostname: sys_hostname,
-      sys_uptime: sys_uptime,
-      sys_load_avg: sys_load_avg,
       sys_mem_mb: sys_mem_mb,
       sys_mem_mib: sys_mem_mib,
-      sys_mem_used: sys_mem_used,
-      sys_mem_free: sys_mem_free,
       sys_swap_mib: sys_swap_mib,
-      sys_net: sys_net,
       sys_tmpdir: sys_tmpdir
     });
   },
 
-  // To trigger this action locally, visit: `http://localhost:port/home/uptime`
   uptime: function (req,res) {
     // Get the value of a parameter
     //var param = req.param('message');

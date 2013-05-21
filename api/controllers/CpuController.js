@@ -26,7 +26,6 @@ var CpuController = {
     //
   },
 
-  // To trigger this action locally, visit: `http://localhost:port/cpu/load_avg`
   load_avg: function (req,res)
   {
     // Get the value of a parameter
@@ -43,7 +42,6 @@ var CpuController = {
     res.json(jsonObj);
   },
 
-  // To trigger this action locally, visit: `http://localhost:port/cpu/usage`
   usage: function (req,res)
   {
     var timestamp_ms = Math.round(Date.now() / 1000);
@@ -69,7 +67,6 @@ var CpuController = {
     res.json(jsonObj);
   },
 
-  // To trigger this action locally, visit: `http://localhost:port/cpu/usage_avg`
   usage_avg: function (req,res)
   {
     var timestamp_ms = Math.round(Date.now() / 1000);
@@ -110,7 +107,6 @@ var CpuController = {
     res.json(jsonObj);
   },
 
-  // To trigger this action locally, visit: `http://localhost:port/cpu/freqs`
   freqs: function (req,res)
   {
     var timestamp_ms = Math.round(Date.now() / 1000);
@@ -138,7 +134,6 @@ var CpuController = {
     res.json(jsonObj);
   },
 
-  // To trigger this action locally, visit: `http://localhost:port/cpu/freq_avg`
   freq_avg: function (req,res)
   {
     var timestamp_ms = Math.round(Date.now() / 1000);
@@ -161,29 +156,6 @@ var CpuController = {
     res.json(jsonObj);
   },
 
-  // To trigger this action locally, visit: `http://localhost:port/cpu/processes_running`
-  processes_running: function (req,res)
-  {
-    var timestamp_ms = Math.round(Date.now() / 1000);
-
-    var loadavg_data = fs.readFileSync("/proc/loadavg", "utf8");
-    loadavg_data = loadavg_data.split(' ');
-
-    var running = loadavg_data[3].split('/')[0];
-    var total = loadavg_data[3].split('/')[1];
-
-    var jsonObj = [{
-      "timestamp": timestamp_ms,
-      "running": parseInt(running),
-      "total": parseInt(total)
-    }]
-
-    // Send a JSON response
-    console.log( JSON.stringify(jsonObj) );
-    res.json(jsonObj);
-  },
-
-  // To trigger this action locally, visit: `http://localhost:port/cpu/stats`
   stat: function (req,res)
   {
     // parse full /proc/stat !

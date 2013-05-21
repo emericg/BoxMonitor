@@ -140,8 +140,7 @@
           <div class="box_body">
             Hostname: <b class="blue"><%- sys_hostname %></b><br />
             Interfaces:<br />
-            <% _.each(sys_net, function (sys_net) { %>
-            <li><%= JSON.stringify(sys_net) %></li><% }) %><br />
+            <span id="network_interfaces">loading...</span>
           </div>
         </div>
       </section>
@@ -157,7 +156,8 @@
           </div>
           <div class="box_body">
             Temporary directory: <b class="pink"><%- sys_tmpdir %></b><br />
-            Disks usage: <span id="disks_overview">loading...</span>
+            Disks usage:<br />
+            <span id="disks_overview">loading...</span>
           </div>
         </div>
       </section>
@@ -187,6 +187,8 @@ setInterval(get_uptime, 1000);
 
 // CPU ///////////////////////////////////////////////////////////////
 
+var cpu_usage = 0.0;
+
 function cpu_freq_avg() {
   socket.request('/cpu/freq_avg', {
     message: 'freq_avg'
@@ -213,7 +215,8 @@ function cpu_usage_avg() {
   }, function (response) {
     //console.log(JSON.stringify(response));
     if( !isNaN(response[0].usage) ) {
-      document.getElementById('cpu_usage_percent').innerHTML = response[0].usage;
+      cpu_usage = response[0].usage;
+      document.getElementById('cpu_usage_percent').innerHTML = cpu_usage;
     }
   });
 }
@@ -231,9 +234,9 @@ cpu_freq_avg();
 cpu_usage_avg();
 //cpu_processes_running();
 
-setInterval(cpu_load_avg, 10000);
+setInterval(cpu_load_avg, 5000);
 setInterval(cpu_freq_avg, 1000);
-setInterval(cpu_usage_avg, 500);
+setInterval(cpu_usage_avg, 750);
 
 // CPU GRAPH /////////////////////////////////////////////////////////
 
@@ -241,7 +244,6 @@ var t = 0; // start time (seconds since epoch)
 var v = 0; // start value (cpu usage)
 var bars = 0; // number of bars per chart
 var w = 16, h = 128; // width and height of a bar
-var time_interval = 1000; // update chart every interval
 var chart_cpu_width = 0;
 
 var chart_cpu = null;
@@ -256,18 +258,9 @@ var y = d3.scale.linear()
     .rangeRound([0, h]);
 
 function cpu_usage_graph() {
-  socket.request('/cpu/usage_avg', {
-    message: 'usage_avg'
-  }, function (response) {
-    //console.log(JSON.stringify(response));
-    if( !isNaN(response[0].usage) ) {
-      v = response[0].usage;
-    }
-  });
-
   return {
     timecode: t++,
-    usage: v
+    usage: cpu_usage
   };
 }
 
@@ -355,15 +348,15 @@ function cpu_redraw() {
     .attr("width", w)
     .attr("height", function(d) { return y(d.usage); })
     .transition()
-    .duration(time_interval)
+    .duration(950)
     .attr("x", function(d, i) { return x(i) - .5; });
 
   rect.transition()
-    .duration(time_interval)
+    .duration(950)
     .attr("x", function(d, i) { return x(i) - .5; });
 
   rect.exit().transition()
-    .duration(time_interval)
+    .duration(950)
     .attr("x", function(d, i) { return x(i - 1) - .5; })
     .remove();
 }
@@ -374,23 +367,23 @@ setInterval(function() {
   data_cpu.shift();
   data_cpu.push(cpu_usage_graph());
   cpu_redraw();
-}, time_interval + 100); // The extra 100ms helps keep the timescale linear
+}, 1000);
 
 // MEM ///////////////////////////////////////////////////////////////
 
-var rampercent = 0.0;
+var mem_usage = 0.0;
 
 function mem_stats() {
-  socket.request('/mem/mem_stats', {
-    message: 'mem_stats'
+  socket.request('/mem/stats', {
+    message: 'stats'
   }, function (response) {
   //console.log(JSON.stringify(response));
 
   var ramused = (response[1].MemTotal - response[1].MemFree - response[1].Buffers - response[1].Cached);
   var ramfree = (response[1].MemTotal - ramused);
-  rampercent = ((ramused / response[1].MemTotal) * 100).toFixed(1);
+  mem_usage = ((ramused / response[1].MemTotal) * 100).toFixed(1);
 
-  document.getElementById('mem_usage_percent').innerHTML = rampercent;
+  document.getElementById('mem_usage_percent').innerHTML = mem_usage;
   document.getElementById('ram_used').innerHTML = (ramused / 1024).toFixed() + " Mib";
   document.getElementById('ram_free').innerHTML = (ramfree / 1024).toFixed() + " Mib";
 
@@ -400,12 +393,12 @@ function mem_stats() {
 }
 
 function swap_stats() {
-  socket.request('/mem/swap_stats', {
-    message: 'swap_stats'
+  socket.request('/swap/stats', {
+    message: 'stats'
   }, function (response) {
   //console.log(JSON.stringify(response));
 
-  var swapused = response[1].SwapTotal;
+  var swapused = response[1].SwapTotal - response[1].SwapFree;
   var swapfree = response[1].SwapFree;
 
   document.getElementById('swap_used').innerHTML = (swapused / 1024).toFixed() + " Mib";
@@ -434,7 +427,7 @@ var chart_mem = null;
 var data_mem = new Array();
 
 function mem_draw() {
-  data_mem[0] = rampercent;
+  data_mem[0] = mem_usage;
 
   var x = d3.scale.linear()
     .domain([0, 100])
@@ -503,7 +496,7 @@ function mem_draw() {
 }
 
 function mem_redraw() {
-  data_mem[0] = rampercent;
+  data_mem[0] = mem_usage;
 
   var x = d3.scale.linear()
     .domain([0, 100])
@@ -526,7 +519,7 @@ setInterval(mem_redraw, 2500);
 // DISKS /////////////////////////////////////////////////////////////
 
 function get_disks() {
-  socket.request('/disks/stats', {
+  socket.request('/disk/stats', {
     message: 'stats'
   }, function (response) {
     document.getElementById('disks_overview').innerHTML = JSON.stringify(response);
@@ -535,5 +528,18 @@ function get_disks() {
 
 get_disks();
 //setInterval(get_disks, 10000);
+
+// NETWORK ///////////////////////////////////////////////////////////
+
+function get_network_interfaces() {
+  socket.request('/network/interfaces', {
+    message: 'interfaces'
+  }, function (response) {
+    document.getElementById('network_interfaces').innerHTML = JSON.stringify(response);
+  });
+}
+
+get_network_interfaces();
+//setInterval(get_network_interfaces, 10000);
 
 </script>

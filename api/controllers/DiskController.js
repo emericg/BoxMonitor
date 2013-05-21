@@ -1,5 +1,5 @@
 /*---------------------
-    :: Disks 
+    :: Disk
     -> controller
 ---------------------*/
 
@@ -17,16 +17,16 @@ df.stdout.on('data', function (data) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-var DisksController = {
+var DiskController = {
 
-  // To trigger this action locally, visit: `http://localhost:port/disks/index`
+  // To trigger this action locally, visit: `http://localhost:port/disk/index`
   index: function (req,res) {
 
     // Send a JSON response
     res.send(df_string, { 'Content-Type': 'text/html' }, 201);
   },
 
-  // To trigger this action locally, visit: `http://localhost:port/disks/stats`
+  // Results are in kiB
   stats: function (req,res)
   {
     var timestamp_ms = Math.round(Date.now() / 1000);
@@ -63,4 +63,4 @@ var DisksController = {
   },
 
 };
-module.exports = DisksController;
+module.exports = DiskController;

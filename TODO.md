@@ -6,26 +6,28 @@ A realtime Linux system monitoring, using node.js with the Sails framework and d
 INFOS
 -----
 
-- disks
-- network
-- users
+- disks usage
+- network (interface + basic traffic)
+- users connected
 
 REALTIME
 --------
 
 #CPU
 - detailed chart (cpus, load, freq...)
-- process map
+- process list (clickable)
+- process map (on demand ?)
 
 #MEM
 - detailed chart (used, cached, buffered...)
-- usage map
+- usage map (on demand ?)
 
 #DISK
-- (per disk) full disk usage map
+- detailed IO chart
+- (per disk) full disk usage map (on demand)
 
 #NET
-- detailed chart
+- detailed traffic chart
 - basic connection tracking ?
 
 #MISC

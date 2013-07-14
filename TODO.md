@@ -3,12 +3,22 @@ BoxMonitor
 
 A realtime Linux system monitoring, using node.js with the Sails framework and d3.js for charting results.
 
+* Local or remote monitoring
+* Simple password protection (authenticate the computer not the user)
+> Do not disrupt the "server"
+* Maximum of client side computation
+* No persistent data or configuration on the server
+* Long monitoring period / special configuration > client side storage ?
+
+BoxMonitor pages
+================
+
 INFOS
 -----
 
-- disks usage
-- network (interface + basic traffic)
-- users connected
+- disks usage (virtual, physical, other)
+- network (interface + basic traffic infos (data transfered, speed ?)
+- users connected (nb, sources)
 
 REALTIME
 --------
@@ -27,7 +37,8 @@ REALTIME
 - (per disk) full disk usage map (on demand)
 
 #NET
-- detailed traffic chart
+- detailed network trafic chart
+- data transfered
 - basic connection tracking ?
 
 #MISC
@@ -39,9 +50,9 @@ LOGS
 ----
 
 - dmesg
-- custom log file ?
+- custom log files ?
 
-ALERTS
+ALERTS (page or popup ?)
 ------
 
 - server ping
@@ -51,4 +62,4 @@ ALERTS
 ABOUT
 -----
 
-- todo
+- general infos about the software and the devs

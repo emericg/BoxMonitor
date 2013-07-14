@@ -10,25 +10,30 @@ Features
 - CPU monitoring
 - RAM overview
 - Disks usage
-- And more to come...
 
 Requirements
 ------------
 
 - Node.js (version 0.10 ?)
-- A Linux, system with unrestricted access to the /proc virtual filesystem.
+- A Linux system, with unrestricted access to the /proc virtual filesystem.
 
 Installation
 ------------
 
 > $ git clone https://github.com/emericg/BoxMonitor.git  
+> $ cd BoxMonitor  
 > $ npm install  
-> $ node app  
+> $ node app.js  
 
-Then you can browse <http://localhost:1337/>
+Then you can open the application with your browser at <http://localhost:1337/>.  
 You can also change the default port inside 'config/application.js'.
 
-Licence
+Website
+-------
+
+You can browse the project's GitHub page and wiki at <https://github.com/emericg/BoxMonitor>
+
+License
 -------
 
 GPL v3 <http://www.gnu.org/licenses/gpl-3.0.txt>

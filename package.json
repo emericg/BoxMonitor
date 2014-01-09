@@ -8,7 +8,7 @@
     "url": "https://github.com/emericg/BoxMonitor"
   },
   "dependencies": {
-    "sails": "= 0.8.94",
+    "sails": "= 0.8.94"
   },
   "engines": {
     "node": ">= 0.10.0"

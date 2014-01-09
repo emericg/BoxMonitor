@@ -14,8 +14,9 @@ Features
 Requirements
 ------------
 
-- Node.js (version 0.10 ?)
-- A Linux system, with unrestricted access to the /proc virtual filesystem.
+- Node.js (version 0.10)
+- Sails.js (version 0.8.94)
+- A Linux system, with unrestricted read access to the /proc virtual filesystem.
 
 Installation
 ------------

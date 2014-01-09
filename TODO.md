@@ -16,9 +16,11 @@ BoxMonitor pages
 INFOS
 -----
 
+- cpu (threads vs processes ?)
 - disks usage (virtual, physical, other)
 - network (interface + basic traffic infos (data transfered, speed ?)
 - users connected (nb, sources)
+- "connected from" ?
 
 REALTIME
 --------
@@ -26,15 +28,16 @@ REALTIME
 #CPU
 - detailed chart (cpus, load, freq...)
 - process list (clickable)
-- process map (on demand ?)
+- process map (pretty graph, on demand)
 
 #MEM
 - detailed chart (used, cached, buffered...)
-- usage map (on demand ?)
+- usage map (pretty graph, on demand)
 
 #DISK
 - detailed IO chart
-- (per disk) full disk usage map (on demand)
+- (per disk) full disk usage map (pretty graph, on demand)
+- open file descriptors
 
 #NET
 - detailed network trafic chart
